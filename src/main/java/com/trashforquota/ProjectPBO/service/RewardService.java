@@ -1,7 +1,11 @@
 package com.trashforquota.ProjectPBO.service;
 
-import com.trashforquota.ProjectPBO.model.*;
-import com.trashforquota.ProjectPBO.repository.*;
+import com.trashforquota.ProjectPBO.model.Reward;
+import com.trashforquota.ProjectPBO.model.Transaksi;
+import com.trashforquota.ProjectPBO.model.User;
+import com.trashforquota.ProjectPBO.repository.RewardRepository;
+import com.trashforquota.ProjectPBO.repository.TransaksiRepository;
+import com.trashforquota.ProjectPBO.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +28,7 @@ public class RewardService {
         Reward reward = rewardRepository.findById(rewardId)
                 .orElseThrow(() -> new RuntimeException("Reward tidak tersedia"));
 
-        // Validasi poin
+        // Validasi poin: Sesuaikan dengan nama field 'poin' di Entity User
         if (user.getPoin() < reward.getPoinDibutuhkan()) {
             return "Gagal: Poin tidak cukup. Saldo Anda: " + user.getPoin();
         }
@@ -33,18 +37,14 @@ public class RewardService {
         user.setPoin(user.getPoin() - reward.getPoinDibutuhkan());
         userRepository.save(user);
 
-        // Tentukan jenis transaksi untuk pencatatan
-        Transaksi.JenisTransaksi jenis = (reward instanceof KuotaInternet) 
-                ? Transaksi.JenisTransaksi.TUKAR_KUOTA 
-                : Transaksi.JenisTransaksi.TUKAR_PULSA;
-
-        // Catat riwayat penukaran
+        // Catat riwayat penukaran di tabel transaksi[cite: 1]
         Transaksi t = new Transaksi();
         t.setUser(user);
-        t.setReward(reward);
-        t.setJenisTransaksi(jenis);
-        t.setJumlahPoin(-reward.getPoinDibutuhkan()); // Simpan sebagai angka negatif agar mudah dihitung
-        t.setDetail("Penukaran " + reward.getNamaReward() + " (" + reward.getProvider() + ")");
+        // t.setReward(reward); // Aktifkan jika di Entity Transaksi ada field reward
+        t.setJenisTransaksi("TUKAR_REWARD");
+        t.setJumlahPoin(-reward.getPoinDibutuhkan()); // Simpan minus untuk penukaran
+        t.setDetail("Tukar Reward: " + reward.getNamaReward() + " (" + reward.getProvider() + ")");
+        t.setBerat(0.0); // Reward tidak ada berat, set 0 sesuai kolom DB[cite: 1]
         
         transaksiRepository.save(t);
 

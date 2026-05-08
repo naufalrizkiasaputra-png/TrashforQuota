@@ -1,7 +1,12 @@
 package com.trashforquota.ProjectPBO.service;
 
-import com.trashforquota.ProjectPBO.model.*;
-import com.trashforquota.ProjectPBO.repository.*;
+import com.trashforquota.ProjectPBO.model.ItemSampah;
+import com.trashforquota.ProjectPBO.model.SmartBin;
+import com.trashforquota.ProjectPBO.model.Transaksi;
+import com.trashforquota.ProjectPBO.model.User;
+import com.trashforquota.ProjectPBO.repository.SmartBinRepository;
+import com.trashforquota.ProjectPBO.repository.TransaksiRepository;
+import com.trashforquota.ProjectPBO.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,18 +27,19 @@ public class TrashService {
         User user = userRepository.findById(userId).orElseThrow();
         SmartBin bin = smartBinRepository.findById(binId).orElseThrow();
 
-        // Hitung poin: berat (gram) * nilai poin per gram
+        // Hitung poin: berat * nilai poin per gram[cite: 1]
         int poinDidapat = (int) (beratGram * item.getNilaiPoinPerGram());
 
         // Update saldo user & kapasitas bin
         user.setPoin(user.getPoin() + poinDidapat);
         bin.setTotalSampah(bin.getTotalSampah() + beratGram);
 
-        // Catat di tabel transaksi
+        // Catat di tabel transaksi[cite: 1]
         Transaksi t = new Transaksi();
         t.setUser(user);
-        t.setJenisTransaksi(Transaksi.JenisTransaksi.SETOR_SAMPAH);
+        t.setJenisTransaksi("SETOR_SAMPAH");
         t.setJumlahPoin(poinDidapat);
+        t.setBerat(beratGram);
         t.setDetail("Setor " + item.getJenis() + " seberat " + beratGram + "g");
 
         userRepository.save(user);

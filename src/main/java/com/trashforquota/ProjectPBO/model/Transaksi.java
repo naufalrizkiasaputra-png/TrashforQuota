@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "transaksi")
-@Data
 public class Transaksi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,22 +17,15 @@ public class Transaksi {
     @JoinColumn(name = "id_user")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "id_reward")
-    private Reward reward;
-
-    @Enumerated(EnumType.STRING)
     @Column(name = "jenis_transaksi")
-    private JenisTransaksi jenisTransaksi;
+    private String jenisTransaksi;
 
     @Column(name = "jumlah_poin")
     private int jumlahPoin;
 
+    private Double berat;
     private String detail;
-
-    private LocalDateTime tanggal = LocalDateTime.now();
-
-    public enum JenisTransaksi {
-        SETOR_SAMPAH, TUKAR_PULSA, TUKAR_KUOTA
-    }
+    
+    @Column(insertable = false, updatable = false)
+    private LocalDateTime tanggal;
 }
