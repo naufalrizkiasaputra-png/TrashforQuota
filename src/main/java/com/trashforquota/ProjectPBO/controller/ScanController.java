@@ -1,52 +1,105 @@
 package com.trashforquota.ProjectPBO.controller;
 
 import com.trashforquota.ProjectPBO.model.ItemSampah;
+import com.trashforquota.ProjectPBO.model.User;
 import com.trashforquota.ProjectPBO.repository.ItemSampahRepository;
-import jakarta.servlet.http.HttpServletRequest;
+import com.trashforquota.ProjectPBO.repository.UserRepository;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
 public class ScanController {
 
     private final ItemSampahRepository itemSampahRepository;
+    private final UserRepository userRepository;
 
-    // Inject Repository agar bisa ambil data dari database
-    public ScanController(ItemSampahRepository itemSampahRepository) {
+    // Constructor Injection
+    public ScanController(ItemSampahRepository itemSampahRepository,
+                          UserRepository userRepository) {
+
         this.itemSampahRepository = itemSampahRepository;
+        this.userRepository = userRepository;
     }
 
+    // =========================
+    // HALAMAN SCAN
+    // =========================
     @GetMapping("/scan")
     public String scanPage(Model model) {
-        // Kirim daftar item ke halaman scan agar muncul kolom inputnya
+
         model.addAttribute("items", itemSampahRepository.findAll());
-        return "scan"; 
+
+        return "scan";
     }
 
+    // =========================
+    // HITUNG POIN
+    // =========================
     @PostMapping("/scan")
-    public String processScan(HttpServletRequest request, Model model) {
-        List<ItemSampah> items = itemSampahRepository.findAll();
+    public String processScan(
+
+            @RequestParam("jenis") List<String> jenisList,
+            @RequestParam("berat") List<Integer> beratList,
+            Model model,
+            Principal principal
+
+    ) {
+
         int totalPoin = 0;
 
-        // Ambil nilai berat dari setiap input yang ada di halaman
-        for (ItemSampah item : items) {
-            String beratInput = request.getParameter("berat_" + item.getIdItem());
-            if (beratInput != null && !beratInput.isEmpty()) {
-                try {
-                    double berat = Double.parseDouble(beratInput);
-                    totalPoin += (int) (berat * item.getNilaiPoinPerGram());
-                } catch (NumberFormatException e) {
-                    // Abaikan jika input bukan angka
-                }
+        // =========================
+        // HITUNG TOTAL POIN
+        // =========================
+        for (int i = 0; i < jenisList.size(); i++) {
+
+            String jenis = jenisList.get(i);
+            int berat = beratList.get(i);
+
+            switch (jenis.toLowerCase()) {
+
+                case "organik":
+                    totalPoin += berat * 1;
+                    break;
+
+                case "anorganik":
+                    totalPoin += berat * 2;
+                    break;
+
+                case "b3":
+                    totalPoin += berat * 3;
+                    break;
             }
         }
 
-        model.addAttribute("items", items);
+        // =========================
+        // AMBIL USER LOGIN
+        // =========================
+        String username = principal.getName();
+
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        // =========================
+        // TAMBAH POIN USER
+        // =========================
+        user.setPoin(user.getPoin() + totalPoin);
+
+        // SAVE KE DATABASE
+        userRepository.save(user);
+
+        // =========================
+        // KIRIM DATA KE HTML
+        // =========================
         model.addAttribute("hasilPoin", totalPoin);
+        model.addAttribute("items", itemSampahRepository.findAll());
+        model.addAttribute("user", user);
+
         return "scan";
     }
 }

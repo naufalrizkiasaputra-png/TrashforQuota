@@ -11,7 +11,7 @@ import lombok.Builder;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder // Memudahkan pembuatan objek User baru di Controller
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +23,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    /**
-     * Sesuai struktur DB: nama kolom adalah 'nomor_hp'.
-     * Kita gunakan @Column untuk mapping agar di Java tetap bisa menggunakan camelCase.
-     */
     @Column(name = "nomor_hp")
     private String nomorHp;
 
     private int poin;
 
-    /**
-     * Sesuai struktur DB: tipe data adalah ENUM('ADMIN', 'USER').
-     */
+    // TAMBAHKAN FIELD INI
+    private String foto;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -42,23 +38,7 @@ public class User {
         ADMIN, USER
     }
 
-    /**
-     * HELPER METHODS
-     * Menambahkan getter/setter dengan nama 'noHp' agar sesuai dengan 
-     * parameter @RequestParam di AdminController dan variabel di HTML.
-     */
-    public String getNoHp() {
-        return nomorHp;
-    }
-
-    public void setNoHp(String noHp) {
-        this.nomorHp = noHp;
-    }
-
-    /**
-     * Digunakan oleh CustomUserDetailsService untuk Spring Security
-     */
-    public String getRoleName() {
-        return role != null ? role.name() : "USER";
-    }
+    public String getNoHp() { return nomorHp; }
+    public void setNoHp(String noHp) { this.nomorHp = noHp; }
+    public String getRoleName() { return role != null ? role.name() : "USER"; }
 }

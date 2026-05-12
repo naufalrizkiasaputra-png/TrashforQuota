@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - TrashforQuota</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans min-h-screen">
+
+    <nav class="bg-green-600 p-4 text-white shadow-md w-full">
+        <div class="flex justify-between items-center px-6">
+            <h1 class="text-2xl font-bold italic tracking-tighter text-white">TrashforQuota</h1>
+            <a th:href="@{/user/home}" class="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-5 py-2 rounded-full transition-all border border-white/30 text-sm font-semibold">
+                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            </a>
+        </div>
+    </nav>
+
+    <main class="p-6 md:p-12 max-w-6xl mx-auto">
+        
+        <div class="mb-10 text-center">
+            <h2 class="text-4xl font-black text-gray-800 uppercase tracking-tight">Papan Peringkat 🏆</h2>
+            <p class="text-gray-500 mt-2 text-lg">Para pahlawan lingkungan dengan kontribusi sampah terbanyak.</p>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-800 text-white">
+                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider">No</th>
+                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider">Nama Pahlawan</th>
+                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider text-center">Level</th>
+                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider text-right">Total Poin</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr th:each="leader, iter : ${leaders}" 
+                        th:classappend="${iter.index == 0} ? 'bg-yellow-50/50' : (${iter.index == 1} ? 'bg-gray-50/50' : (${iter.index == 2} ? 'bg-orange-50/30' : ''))"
+                        class="hover:bg-green-50/30 transition-colors group">
+                        
+                        <td class="px-6 py-6">
+                            <div class="flex items-center">
+                                <span th:if="${iter.index == 0}" class="text-2xl">🥇</span>
+                                <span th:if="${iter.index == 1}" class="text-2xl">🥈</span>
+                                <span th:if="${iter.index == 2}" class="text-2xl">🥉</span>
+                                <span th:if="${iter.index > 2}" th:text="${iter.count}" class="font-bold text-gray-400 ml-2">1</span>
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-6">
+                            <div class="flex items-center gap-4">
+                                <img th:src="${leader.foto != null ? '/img/uploads/' + leader.foto : 'https://ui-avatars.com/api/?name=' + leader.username + '&background=random'}" 
+                                     class="w-12 h-12 rounded-full border-2 border-white shadow-sm group-hover:scale-110 transition-transform object-cover">
+                                <span class="font-bold text-gray-800 text-lg" th:text="${leader.username}">Username</span>
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-6 text-center">
+                            <span th:if="${leader.poin >= 1000}" class="px-4 py-1.5 bg-purple-100 text-purple-700 rounded-full text-xs font-black border border-purple-200">PANDAWARA</span>
+                            <span th:if="${leader.poin < 1000 and leader.poin >= 500}" class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-black border border-blue-200">CLEAN FREAK</span>
+                            <span th:if="${leader.poin < 500}" class="px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-xs font-black border border-green-200">GERMAPHOBE</span>
+                        </td>
+
+                        <td class="px-6 py-6 text-right">
+                            <div class="flex flex-col items-end">
+                                <span class="text-2xl font-black text-green-600" th:text="${leader.poin}">0</span>
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest -mt-1">Poin XP</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(leaders)}">
+                        <td colspan="4" class="text-center py-20 text-gray-400 italic">Belum ada data pahlawan...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 p-6 bg-blue-600 rounded-3xl text-white flex items-center justify-between shadow-lg shadow-blue-200 overflow-hidden relative">
+            <div class="z-10">
+                <h4 class="text-xl font-bold italic">Ingin masuk ke 3 besar?</h4>
+                <p class="text-blue-100 text-sm">Ayo kumpulkan lebih banyak botol plastik dan tukarkan poinmu!</p>
+            </div>
+            <i class="fas fa-trophy text-6xl opacity-20 absolute right-10 rotate-12"></i>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,168 +1,596 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Tukar Poin</title>
+    <title>Tukar Poin - TrashID</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+          <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        .produk-card {
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
+
+        body{
+            background: linear-gradient(to bottom, #eefaf3, #f7f9fc);
+            min-height: 100vh;
+        }
+
+        .hero-box{
+            background: linear-gradient(135deg,#198754,#20c997);
+            border-radius: 30px;
+            color: white;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-circle{
+            width: 250px;
+            height: 250px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            position: absolute;
+            top: -80px;
+            right: -70px;
+        }
+
+        .hero-circle2{
+            width: 170px;
+            height: 170px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -50px;
+            left: -40px;
+        }
+
+        .produk-card{
+            border-radius: 22px;
+            padding: 20px;
             cursor: pointer;
-            border: 2px solid #eee;
-            transition: 0.2s;
+            border: none;
+            transition: .2s;
+            background: white;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
         }
 
-        .produk-card:hover {
-            transform: scale(1.05);
-            border-color: #0d6efd;
+        .produk-card:hover{
+            transform: translateY(-5px);
         }
 
-        .produk-card.active {
-            border-color: #0d6efd;
-            background-color: #e7f1ff;
+        .produk-card.active{
+            background: linear-gradient(135deg,#198754,#20c997);
+            color: white;
+            transform: scale(1.03);
         }
-        .btn-group .btn {
-        padding: 10px;
-        font-weight: 600;
+
+        .produk-card.active .harga{
+            color: #fff !important;
         }
+
+        .produk-card.active .masa{
+            color: rgba(255,255,255,0.8) !important;
+        }
+
+        .kategori-btn{
+            border-radius: 14px !important;
+            padding: 14px;
+            font-weight: 700;
+        }
+
+        .info-box{
+            border-radius: 22px;
+        }
+
+        .phone-input{
+            border-radius: 16px;
+            padding: 14px;
+        }
+
+        .section-title{
+            font-weight: 800;
+            color: #198754;
+        }
+
+        .point-badge{
+            background: #e9fff3;
+            color: #198754;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
     </style>
 </head>
 
-<body class="bg-light">
+<body>
 
 <div class="container py-4">
 
-    <a href="/dashboard" class="btn btn-outline-secondary mb-3">⬅ Kembali</a>
+    <!-- BACK -->
+    <a href="/dashboard"
+       class="btn btn-light shadow-sm px-4 mb-3">
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
+        <i class="bi bi-arrow-left"></i>
+        Kembali
 
-            <h5 class="fw-bold mb-3">🎁 Tukar Poin</h5>
+    </a>
+
+    <!-- HERO -->
+    <div class="hero-box shadow-lg p-4 mb-4">
+
+        <div class="hero-circle"></div>
+        <div class="hero-circle2"></div>
+
+        <div class="row align-items-center position-relative">
+
+            <div class="col-md-8">
+
+                <h2 class="fw-bold mb-2">
+                    🎁 Tukar Poin Jadi Reward
+                </h2>
+
+                <p class="opacity-75 mb-4">
+                    Gunakan poin hasil scan sampah untuk membeli kuota internet atau pulsa.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
+                        ⚡ Proses Cepat
+                    </div>
+
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
+                        📱 Semua Provider
+                    </div>
+
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
+                        🎉 Banyak Pilihan
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4 text-center d-none d-md-block">
+
+                <i class="bi bi-gift-fill"
+                   style="font-size:120px;opacity:.9;"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- INFO -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="bg-white shadow-sm p-3 info-box">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="me-3 fs-1">
+                        📶
+                    </div>
+
+                    <div>
+                        <small class="text-muted">Produk</small>
+                        <h5 class="fw-bold mb-0">
+                            Kuota & Pulsa
+                        </h5>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="bg-white shadow-sm p-3 info-box">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="me-3 fs-1">
+                        🎯
+                    </div>
+
+                    <div>
+                        <small class="text-muted">Pilihan</small>
+                        <h5 class="fw-bold mb-0">
+                            Banyak Reward
+                        </h5>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="bg-white shadow-sm p-3 info-box">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="me-3 fs-1">
+                        💰
+                    </div>
+
+                    <div>
+                        <small class="text-muted">Penukaran</small>
+                        <h5 class="fw-bold mb-0">
+                            Realtime
+                        </h5>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="card border-0 shadow-lg">
+
+        <div class="card-body p-4">
+
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h4 class="section-title mb-1">
+                        Pilih Reward
+                    </h4>
+
+                    <small class="text-muted">
+                        Pilih kuota atau pulsa yang ingin ditukarkan
+                    </small>
+
+                </div>
+
+                <div class="point-badge">
+                    💎 Tukar Poin
+                </div>
+
+            </div>
 
             <!-- NOMOR HP -->
-            <div class="mb-3">
-                <label class="fw-bold">Nomor HP</label>
-                <input type="text" th:value="${noHp}">
+            <div class="mb-4">
+
+                <label class="fw-bold mb-2">
+                    Nomor HP Tujuan
+                </label>
+
+                <div class="input-group">
+
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-phone"></i>
+                    </span>
+
+                    <input type="text"
+                           id="nohp"
+                           class="form-control phone-input"
+                           th:value="${noHp}">
+
+                </div>
+
             </div>
 
             <!-- SWITCH -->
             <div class="d-flex justify-content-center mb-4">
-                <div class="btn-group w-50 shadow-sm" role="group">
-                    <button class="btn btn-primary" onclick="setJenis('pulsa')" id="btnPulsa">Pulsa</button>
-                    <button class="btn btn-outline-primary" onclick="setJenis('kuota')" id="btnKuota">Kuota</button>
+
+                <div class="btn-group w-100 shadow-sm">
+
+                    <button class="btn btn-success kategori-btn"
+                            onclick="setJenis('kuota')"
+                            id="btnKuota">
+
+                        📶 Kuota
+
+                    </button>
+
+                    <button class="btn btn-outline-success kategori-btn"
+                            onclick="setJenis('pulsa')"
+                            id="btnPulsa">
+
+                        ⚡ Pulsa
+
+                    </button>
+
                 </div>
+
             </div>
 
-            <!-- GRID PRODUK -->
-            <div class="row g-3" id="produkContainer"></div>
+            <!-- GRID -->
+            <div class="row g-4" id="produkContainer"></div>
 
             <!-- BUTTON -->
-            <div class="mt-4 text-end">
-                <button class="btn btn-success px-4" onclick="konfirmasi()">Lanjut</button>
+            <div class="mt-5">
+
+                <button class="btn btn-success btn-lg w-100 py-3 fw-bold shadow-sm"
+                        onclick="konfirmasi()">
+
+                    <i class="bi bi-check-circle me-2"></i>
+                    Lanjutkan Penukaran
+
+                </button>
+
             </div>
 
         </div>
+
     </div>
+
 </div>
 
 <!-- MODAL -->
 <div class="modal fade" id="modalKonfirmasi">
-    <div class="modal-dialog">
-        <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Konfirmasi</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+    <div class="modal-dialog modal-dialog-centered">
 
-            <div class="modal-body">
-                <p><b>Nomor HP:</b> <span id="confNoHp"></span></p>
-                <p><b>Pilihan:</b> <span id="confProduk"></span></p>
-            </div>
+        <div class="modal-content border-0 shadow-lg"
+             style="border-radius:24px;">
 
-            <div class="modal-footer">
+            <div class="modal-body p-4">
+
+                <div class="text-center mb-4">
+
+                    <div style="font-size:70px;">
+                        🎉
+                    </div>
+
+                    <h4 class="fw-bold">
+                        Konfirmasi Reward
+                    </h4>
+
+                    <p class="text-muted">
+                        Pastikan data penukaran sudah benar
+                    </p>
+
+                </div>
+
+                <div class="bg-light rounded-4 p-3 mb-3">
+
+                    <small class="text-muted">
+                        Nomor HP
+                    </small>
+
+                    <h5 class="fw-bold mb-0" id="confNoHp"></h5>
+
+                </div>
+
+                <div class="bg-light rounded-4 p-3 mb-4">
+
+                    <small class="text-muted">
+                        Reward Dipilih
+                    </small>
+
+                    <h5 class="fw-bold mb-0" id="confProduk"></h5>
+
+                </div>
+
                 <form method="post" action="/tukar">
+
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+
                     <input type="hidden" name="nohp" id="inputNoHp">
                     <input type="hidden" name="produk" id="inputProduk">
-                    <button type="submit" class="btn btn-success">Konfirmasi</button>
+
+                    <button type="submit"
+                            class="btn btn-success w-100 py-3 fw-bold">
+
+                        Tukar Sekarang
+
+                    </button>
+
                 </form>
+
             </div>
 
         </div>
+
     </div>
+
 </div>
 
 <script>
+
     let selectedProduk = "";
     let currentJenis = "kuota";
 
     const data = {
+
         kuota: [
-        "1GB / 1 Hari (50 poin)",
-        "2GB / 3 Hari (90 poin)",
-        "3GB / 7 Hari (120 poin)",
-        "5GB / 7 Hari (200 poin)",
-        "8GB / 15 Hari (300 poin)",
-        "10GB / 30 Hari (400 poin)",
-        "15GB / 30 Hari (600 poin)",
-        "20GB / 30 Hari (800 poin)",
-        "30GB / 30 Hari (1200 poin)"
+
+            {
+                nama: "1 GB",
+                masa: "1 Hari",
+                poin: 50
+            },
+
+            {
+                nama: "2 GB",
+                masa: "3 Hari",
+                poin: 90
+            },
+
+            {
+                nama: "5 GB",
+                masa: "7 Hari",
+                poin: 200
+            },
+
+            {
+                nama: "10 GB",
+                masa: "30 Hari",
+                poin: 400
+            },
+
+            {
+                nama: "15 GB",
+                masa: "30 Hari",
+                poin: 600
+            },
+
+            {
+                nama: "20 GB",
+                masa: "30 Hari",
+                poin: 800
+            },
+
+            {
+                nama: "30 GB",
+                masa: "30 Hari",
+                poin: 1200
+            },
+
+            {
+                nama: "50 GB",
+                masa: "30 Hari",
+                poin: 1800
+            }
+
         ],
+
         pulsa: [
-        "Pulsa 5.000 (50 poin)",
-        "Pulsa 10.000 (100 poin)",
-        "Pulsa 15.000 (150 poin)",
-        "Pulsa 20.000 (200 poin)",
-        "Pulsa 25.000 (250 poin)",
-        "Pulsa 50.000 (500 poin)",
-        "Pulsa 75.000 (750 poin)",
-        "Pulsa 100.000 (1000 poin)"
+
+            {
+                nama: "Pulsa 5K",
+                masa: "Instant",
+                poin: 50
+            },
+
+            {
+                nama: "Pulsa 10K",
+                masa: "Instant",
+                poin: 100
+            },
+
+            {
+                nama: "Pulsa 20K",
+                masa: "Instant",
+                poin: 200
+            },
+
+            {
+                nama: "Pulsa 50K",
+                masa: "Instant",
+                poin: 500
+            },
+
+            {
+                nama: "Pulsa 100K",
+                masa: "Instant",
+                poin: 1000
+            }
+
         ]
     };
 
-    function renderProduk(jenis) {
-        const container = document.getElementById("produkContainer");
+    function renderProduk(jenis){
+
+        const container =
+            document.getElementById("produkContainer");
+
         container.innerHTML = "";
 
         data[jenis].forEach(item => {
+
             const col = document.createElement("div");
-            col.className = "col-6 col-md-4";
+
+            col.className = "col-6 col-md-4 col-lg-3";
 
             const card = document.createElement("div");
-            card.className = "produk-card";
-            card.innerText = item;
+
+            card.className =
+                "produk-card shadow-sm";
+
+            card.innerHTML = `
+
+                <div class="mb-3" style="font-size:45px;">
+                    ${jenis === 'kuota' ? '📶' : '⚡'}
+                </div>
+
+                <h5 class="fw-bold">
+                    ${item.nama}
+                </h5>
+
+                <div class="masa text-muted mb-3">
+                    ${item.masa}
+                </div>
+
+                <div class="harga fw-bold text-success">
+                    ${item.poin} poin
+                </div>
+
+            `;
 
             card.onclick = () => {
-                document.querySelectorAll(".produk-card").forEach(c => c.classList.remove("active"));
+
+                document
+                    .querySelectorAll(".produk-card")
+                    .forEach(c => c.classList.remove("active"));
+
                 card.classList.add("active");
-                selectedProduk = item;
+
+                selectedProduk =
+                    `${item.nama} - ${item.poin} poin`;
+
             };
 
             col.appendChild(card);
+
             container.appendChild(col);
+
         });
+
     }
 
-    function setJenis(jenis) {
+    function setJenis(jenis){
+
         currentJenis = jenis;
 
-        document.getElementById("btnKuota").classList.toggle("btn-primary", jenis === "kuota");
-        document.getElementById("btnKuota").classList.toggle("btn-outline-primary", jenis !== "kuota");
+        document
+            .getElementById("btnKuota")
+            .classList.toggle("btn-success", jenis === "kuota");
 
-        document.getElementById("btnPulsa").classList.toggle("btn-primary", jenis === "pulsa");
-        document.getElementById("btnPulsa").classList.toggle("btn-outline-primary", jenis !== "pulsa");
+        document
+            .getElementById("btnKuota")
+            .classList.toggle("btn-outline-success", jenis !== "kuota");
 
-        selectedProduk = "";
+        document
+            .getElementById("btnPulsa")
+            .classList.toggle("btn-success", jenis === "pulsa");
+
+        document
+            .getElementById("btnPulsa")
+            .classList.toggle("btn-outline-success", jenis !== "pulsa");
+
         renderProduk(jenis);
     }
 
-    function konfirmasi() {
-        const nohp = document.getElementById("nohp").value;
+    function konfirmasi(){
 
-        if (!nohp || !selectedProduk) {
-            alert("Pilih produk dulu!");
+        const nohp =
+            document.getElementById("nohp").value;
+
+        if(!selectedProduk){
+
+            alert("Pilih reward terlebih dahulu!");
             return;
         }
 
@@ -172,14 +600,80 @@
         document.getElementById("inputNoHp").value = nohp;
         document.getElementById("inputProduk").value = selectedProduk;
 
-        new bootstrap.Modal(document.getElementById('modalKonfirmasi')).show();
+        new bootstrap.Modal(
+            document.getElementById("modalKonfirmasi")
+        ).show();
     }
 
-    // DEFAULT LOAD → KUOTA
+    // DEFAULT
     renderProduk("kuota");
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+
+    let successMessage = /*[[${success}]]*/ null;
+    let errorMessage = /*[[${error}]]*/ null;
+
+    if(successMessage){
+
+        Swal.fire({
+
+            title: '🎉 Berhasil Ditukar!',
+
+            html: `
+                <div style="font-size:18px;">
+                    Penukaran reward berhasil
+                </div>
+
+                <div style="
+                    font-size:42px;
+                    font-weight:bold;
+                    color:#198754;
+                    margin:12px 0;
+                ">
+                    ✓ SUCCESS
+                </div>
+
+                <div>
+                    Reward sedang diproses 📦
+                </div>
+            `,
+
+            icon: 'success',
+
+            confirmButtonColor: '#198754',
+
+            confirmButtonText: 'Mantap!'
+
+        });
+
+    }
+
+    if(errorMessage){
+
+        Swal.fire({
+
+            title: 'Poin Tidak Cukup 😢',
+
+            text: errorMessage,
+
+            icon: 'error',
+
+            confirmButtonColor: '#dc3545'
+
+        });
+
+    }
+
+    /*]]>*/
+
+</script>
 
 </body>
 </html>
