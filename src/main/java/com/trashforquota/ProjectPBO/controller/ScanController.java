@@ -1,8 +1,10 @@
 package com.trashforquota.ProjectPBO.controller;
 
 import com.trashforquota.ProjectPBO.model.ItemSampah;
+import com.trashforquota.ProjectPBO.model.Transaksi;
 import com.trashforquota.ProjectPBO.model.User;
 import com.trashforquota.ProjectPBO.repository.ItemSampahRepository;
+import com.trashforquota.ProjectPBO.repository.TransaksiRepository;
 import com.trashforquota.ProjectPBO.repository.UserRepository;
 
 import org.springframework.stereotype.Controller;
@@ -19,14 +21,19 @@ public class ScanController {
 
     private final ItemSampahRepository itemSampahRepository;
     private final UserRepository userRepository;
+    private final TransaksiRepository transaksiRepository;
 
     // Constructor Injection
-    public ScanController(ItemSampahRepository itemSampahRepository,
-                          UserRepository userRepository) {
+public ScanController(
+        ItemSampahRepository itemSampahRepository,
+        UserRepository userRepository,
+        TransaksiRepository transaksiRepository
+) {
 
-        this.itemSampahRepository = itemSampahRepository;
-        this.userRepository = userRepository;
-    }
+    this.itemSampahRepository = itemSampahRepository;
+    this.userRepository = userRepository;
+    this.transaksiRepository = transaksiRepository;
+}
 
     // =========================
     // HALAMAN SCAN
@@ -92,6 +99,24 @@ public class ScanController {
 
         // SAVE KE DATABASE
         userRepository.save(user);
+
+        Transaksi transaksi = new Transaksi();
+
+transaksi.setUser(user);
+
+transaksi.setJenisTransaksi("SETOR_SAMPAH");
+
+transaksi.setJumlahPoin(totalPoin);
+
+transaksi.setDetail("Scan sampah berhasil");
+
+transaksi.setStatus("SUCCESS");
+
+transaksi.setBerat((double) beratList.stream()
+        .mapToInt(Integer::intValue)
+        .sum());
+
+transaksiRepository.save(transaksi);
 
         // =========================
         // KIRIM DATA KE HTML

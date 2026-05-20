@@ -5,86 +5,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard - TrashforQuota</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans min-h-screen">
+<body class="bg-slate-50 font-sans min-h-screen selection:bg-green-500 selection:text-white">
 
-    <nav class="bg-green-600 p-4 text-white shadow-md w-full">
-        <div class="flex justify-between items-center px-6">
+    <nav class="bg-gradient-to-r from-green-600 to-emerald-700 p-4 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
             <h1 class="text-2xl font-bold italic tracking-tighter text-white">TrashforQuota</h1>
-            <a th:href="@{/user/home}" class="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-5 py-2 rounded-full transition-all border border-white/30 text-sm font-semibold">
-                <i class="fas fa-arrow-left"></i> Kembali ke Beranda
+            <a th:href="@{/user/home}" class="flex items-center gap-2 bg-white/20 hover:bg-white text-white hover:text-green-700 px-5 py-2 rounded-full transition-all border border-white/30 text-sm font-semibold">
+                <i class="fas fa-arrow-left text-xs"></i> Kembali ke Beranda
             </a>
         </div>
     </nav>
 
-    <main class="p-6 md:p-12 max-w-6xl mx-auto">
+    <header class="text-center max-w-3xl mx-auto mt-10 mb-12 px-4">
+        <h2 class="text-3xl font-black text-slate-800 tracking-tight md:text-4xl uppercase">
+            Papan Peringkat 🏆
+        </h2>
+        <p class="text-xs font-semibold text-slate-400 mt-2 uppercase tracking-wider">
+            Para pahlawan lingkungan dengan kontribusi sampah terbanyak.
+        </p>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 pb-20 space-y-10">
         
-        <div class="mb-10 text-center">
-            <h2 class="text-4xl font-black text-gray-800 uppercase tracking-tight">Papan Peringkat 🏆</h2>
-            <p class="text-gray-500 mt-2 text-lg">Para pahlawan lingkungan dengan kontribusi sampah terbanyak.</p>
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            
+            <div th:each="leader, iterStat : ${leaders}" th:if="${iterStat.count == 2}" 
+                 class="bg-gradient-to-b from-slate-50 to-white border-2 border-slate-300 rounded-2xl p-6 shadow-sm flex flex-col items-center order-2 md:order-1 relative md:h-[230px] justify-center transition-all hover:-translate-y-1.5 hover:shadow-md duration-300 group">
+                <div class="absolute -top-3.5 bg-slate-400 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-xs border border-white">
+                    <i class="fas fa-medal mr-1"></i> 2nd Place
+                </div>
+                <div class="w-16 h-16 rounded-full p-0.5 bg-white border-2 border-slate-300 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                    <img th:src="${leader.foto != null ? '/img/uploads/' + leader.foto : 'https://ui-avatars.com/api/?name=' + leader.username + '&background=random&size=100'}"
+                         class="w-full h-full rounded-full object-cover" alt="Avatar">
+                </div>
+                <h4 class="font-extrabold text-slate-700 mt-3 tracking-tight truncate w-full text-center" th:text="${leader.username}">Username</h4>
+                
+                <div class="mt-1.5 mb-1.5">
+                    <span th:if="${leader.poin >= 500000}" class="px-2.5 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[9px] font-black border border-amber-200 uppercase tracking-tighter italic">Earth Guardian</span>
+                    <span th:if="${leader.poin < 500000 and leader.poin >= 100000}" class="px-2.5 py-0.5 bg-purple-100 text-purple-700 rounded-full text-[9px] font-black border border-purple-200 uppercase tracking-tighter italic">Pandawara</span>
+                    <span th:if="${leader.poin < 100000 and leader.poin >= 25000}" class="px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-[9px] font-black border border-red-200 uppercase tracking-tighter italic">Eco Warrior</span>
+                    <span th:if="${leader.poin < 25000 and leader.poin >= 5000}" class="px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[9px] font-black border border-blue-200 uppercase tracking-tighter italic">Clean Freak</span>
+                    <span th:if="${leader.poin < 5000}" class="px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-[9px] font-black border border-green-200 uppercase tracking-tighter italic">Germaphobe</span>
+                </div>
 
-        <div class="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-800 text-white">
-                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider">No</th>
-                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider">Nama Pahlawan</th>
-                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider text-center">Level</th>
-                        <th class="px-6 py-5 text-sm font-bold uppercase tracking-wider text-right">Total Poin</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    <tr th:each="leader, iter : ${leaders}" 
-                        th:classappend="${iter.index == 0} ? 'bg-yellow-50/50' : (${iter.index == 1} ? 'bg-gray-50/50' : (${iter.index == 2} ? 'bg-orange-50/30' : ''))"
-                        class="hover:bg-green-50/30 transition-colors group">
-                        
-                        <td class="px-6 py-6">
-                            <div class="flex items-center">
-                                <span th:if="${iter.index == 0}" class="text-2xl">🥇</span>
-                                <span th:if="${iter.index == 1}" class="text-2xl">🥈</span>
-                                <span th:if="${iter.index == 2}" class="text-2xl">🥉</span>
-                                <span th:if="${iter.index > 2}" th:text="${iter.count}" class="font-bold text-gray-400 ml-2">1</span>
-                            </div>
-                        </td>
-
-                        <td class="px-6 py-6">
-                            <div class="flex items-center gap-4">
-                                <img th:src="${leader.foto != null ? '/img/uploads/' + leader.foto : 'https://ui-avatars.com/api/?name=' + leader.username + '&background=random'}" 
-                                     class="w-12 h-12 rounded-full border-2 border-white shadow-sm group-hover:scale-110 transition-transform object-cover">
-                                <span class="font-bold text-gray-800 text-lg" th:text="${leader.username}">Username</span>
-                            </div>
-                        </td>
-
-                        <td class="px-6 py-6 text-center">
-                            <span th:if="${leader.poin >= 1000}" class="px-4 py-1.5 bg-purple-100 text-purple-700 rounded-full text-xs font-black border border-purple-200">PANDAWARA</span>
-                            <span th:if="${leader.poin < 1000 and leader.poin >= 500}" class="px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-black border border-blue-200">CLEAN FREAK</span>
-                            <span th:if="${leader.poin < 500}" class="px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-xs font-black border border-green-200">GERMAPHOBE</span>
-                        </td>
-
-                        <td class="px-6 py-6 text-right">
-                            <div class="flex flex-col items-end">
-                                <span class="text-2xl font-black text-green-600" th:text="${leader.poin}">0</span>
-                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest -mt-1">Poin XP</span>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr th:if="${#lists.isEmpty(leaders)}">
-                        <td colspan="4" class="text-center py-20 text-gray-400 italic">Belum ada data pahlawan...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="mt-8 p-6 bg-blue-600 rounded-3xl text-white flex items-center justify-between shadow-lg shadow-blue-200 overflow-hidden relative">
-            <div class="z-10">
-                <h4 class="text-xl font-bold italic">Ingin masuk ke 3 besar?</h4>
-                <p class="text-blue-100 text-sm">Ayo kumpulkan lebih banyak botol plastik dan tukarkan poinmu!</p>
+                <p class="text-xs font-black text-slate-400 uppercase tracking-tighter" th:text="${leader.poin} + ' XP'">0 XP</p>
             </div>
-            <i class="fas fa-trophy text-6xl opacity-20 absolute right-10 rotate-12"></i>
+
+            <div th:each="leader, iterStat : ${leaders}" th:if="${iterStat.count == 1}" 
+                 class="bg-gradient-to-b from-amber-50/40 to-white border-2 border-amber-400 rounded-2xl p-6 shadow-md flex flex-col items-center order-1 md:order-2 relative md:h-[265px] justify-center transition-all hover:-translate-y-1.5 hover:shadow-lg duration-300 group">
+                <div class="absolute -top-4 text-amber-500 drop-shadow-xs text-xl animate-bounce" style="animation-duration: 4s;">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="w-20 h-20 rounded-full p-0.5 bg-white border-2 border-amber-400 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                    <img th:src="${leader.foto != null ? '/img/uploads/' + leader.foto : 'https://ui-avatars.com/api/?name=' + leader.username + '&background=random&size=100'}"
+                         class="w-full h-full rounded-full object-cover" alt="Avatar">
+                </div>
+                <h3 class="font-black text-slate-800 text-lg mt-3 tracking-tight truncate w-full text-center" th:text="${leader.username}">Username</h3>
+                
+                <div class="mt-1.5 mb-1.5">
+                    <span th:if="${leader.poin >= 500000}" class="px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full text-[10px] font-black shadow-sm uppercase tracking-wider italic">Earth Guardian 🌟</span>
+                    <span th:if="${leader.poin < 500000 and leader.poin >= 100000}" class="px-3 py-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full text-[10px] font-black shadow-sm uppercase tracking-wider italic">Pandawara</span>
+                    <span th:if="${leader.poin < 100000 and leader.poin >= 25000}" class="px-3 py-1 bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-full text-[10px] font-black shadow-sm uppercase tracking-wider italic">Eco Warrior</span>
+                    <span th:if="${leader.poin < 25000 and leader.poin >= 5000}" class="px-3 py-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-[10px] font-black shadow-sm uppercase tracking-wider italic">Clean Freak</span>
+                    <span th:if="${leader.poin < 5000}" class="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-full text-[10px] font-black shadow-sm uppercase tracking-wider italic">Germaphobe</span>
+                </div>
+
+                <p class="text-sm font-black text-amber-600 uppercase tracking-tight" th:text="${leader.poin} + ' XP'">0 XP</p>
+            </div>
+
+            <div th:each="leader, iterStat : ${leaders}" th:if="${iterStat.count == 3}" 
+                 class="bg-gradient-to-b from-orange-50/20 to-white border-2 border-orange-400/70 rounded-2xl p-6 shadow-sm flex flex-col items-center order-3 md:order-3 relative md:h-[230px] justify-center transition-all hover:-translate-y-1.5 hover:shadow-md duration-300 group">
+                <div class="absolute -top-3.5 bg-orange-600/80 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-xs border border-white">
+                    <i class="fas fa-medal mr-1"></i> 3rd Place
+                </div>
+                <div class="w-16 h-16 rounded-full p-0.5 bg-white border-2 border-orange-400/60 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                    <img th:src="${leader.foto != null ? '/img/uploads/' + leader.foto : 'https://ui-avatars.com/api/?name=' + leader.username + '&background=random&size=100'}"
+                         class="w-full h-full rounded-full object-cover" alt="Avatar">
+                </div>
+                <h4 class="font-extrabold text-slate-700 mt-3 tracking-tight truncate w-full text-center" th:text="${leader.username}">Username</h4>
+                
+                <div class="mt-1.5 mb-1.5">
+                    <span th:if="${leader.poin >= 500000}" class="px-2.5 py-0.5 bg-amber-100 text-amber-700 rounded-full text-[9px] font-black border border-amber-200 uppercase tracking-tighter italic">Earth Guardian</span>
+                    <span th:if="${leader.poin < 500000 and leader.poin >= 100000}" class="px-2.5 py-0.5 bg-purple-100 text-purple-700 rounded-full text-[9px] font-black border border-purple-200 uppercase tracking-tighter italic">Pandawara</span>
+                    <span th:if="${leader.poin < 100000 and leader.poin >= 25000}" class="px-2.5 py-0.5 bg-red-100 text-red-700 rounded-full text-[9px] font-black border border-red-200 uppercase tracking-tighter italic">Eco Warrior</span>
+                    <span th:if="${leader.poin < 25000 and leader.poin >= 5000}" class="px-2.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[9px] font-black border border-blue-200 uppercase tracking-tighter italic">Clean Freak</span>
+                    <span th:if="${leader.poin < 5000}" class="px-2.5 py-0.5 bg-green-100 text-green-700 rounded-full text-[9px] font-black border border-green-200 uppercase tracking-tighter italic">Germaphobe</span>
+                </div>
+
+                <p class="text-xs font-black text-slate-400 uppercase tracking-tighter" th:text="${leader.poin} + ' XP'">0 XP</p>
+            </div>
+
         </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800 text-slate-200 text-[10px] font-bold uppercase tracking-wider border-b border-slate-700">
+                            <th class="py-4 px-6 text-center w-20">No</th>
+                            <th class="py-4 px-6">Nama Pahlawan</th>
+                            <th class="py-4 px-6 text-center w-44">Level Kesadaran</th>
+                            <th class="py-4 px-6 text-right w-44">Total Poin</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white text-sm text-slate-600">
+                        
+                        <tr th:each="leader, iterStat : ${leaders}" th:if="${iterStat.count > 3}" class="hover:bg-slate-50 transition-colors">
+                            
+                            <td class="py-4 px-6 text-center font-extrabold text-slate-400" th:text="${iterStat.count}">
+                                4
+                            </td>
+                            
+                            <td class="py-4 px-6 font-bold text-slate-700">
+                                <div class="flex items-center gap-3">
+                                    <img th:src="${leader.foto != null ? '/img/uploads/' + leader.foto : 'https://ui-avatars.com/api/?name=' + leader.username + '&background=random&size=100'}"
+                                         class="w-8 h-8 rounded-full border border-slate-200 object-cover" alt="Avatar">
+                                    <span th:text="${leader.username}">Username</span>
+                                </div>
+                            </td>
+                            
+                            <td class="py-4 px-6 text-center">
+                                <span th:if="${leader.poin >= 500000}" class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-black border border-amber-200 uppercase tracking-tighter italic">Earth Guardian</span>
+                                <span th:if="${leader.poin < 500000 and leader.poin >= 100000}" class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-[10px] font-black border border-purple-200 uppercase tracking-tighter italic">Pandawara</span>
+                                <span th:if="${leader.poin < 100000 and leader.poin >= 25000}" class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-black border border-red-200 uppercase tracking-tighter italic">Eco Warrior</span>
+                                <span th:if="${leader.poin < 25000 and leader.poin >= 5000}" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black border border-blue-200 uppercase tracking-tighter italic">Clean Freak</span>
+                                <span th:if="${leader.poin < 5000}" class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-black border border-green-200 uppercase tracking-tighter italic">Germaphobe</span>
+                            </td>
+                            
+                            <td class="py-4 px-6 text-right font-black text-slate-700 tracking-tight">
+                                <span th:text="${leader.poin}">0</span> <span class="text-[10px] font-bold text-slate-400">XP</span>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
     </main>
 
 </body>

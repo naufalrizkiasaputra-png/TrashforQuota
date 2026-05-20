@@ -19,19 +19,18 @@
     <div class="sidebar shadow">
         <div class="px-4 mb-4 text-white"><h4>TrashID Admin</h4></div>
         <a href="/admin/home" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="#admin-list"><i class="bi bi-shield-lock"></i> Daftar Admin</a>
-        <a href="#trx-list"><i class="bi bi-credit-card"></i> Penukaran Poin</a>
-        <a href="#bin-status"><i class="bi bi-trash"></i> Smart Bin</a>
-        <a href="#item-config"><i class="bi bi-gear"></i> Konfigurasi</a>
+        <a href="/admin/daftar-admin"><i class="bi bi-shield-lock"></i> Daftar Admin</a>
+        <a href="/admin/reward"><i class="bi bi-credit-card"></i> Reward</a>
+        <a href="/admin/smart-bin"><i class="bi bi-trash"></i> Smart Bin</a>
+        <a href="/admin/konfigurasi"><i class="bi bi-gear"></i> Konfigurasi</a>
         <hr class="mx-3 text-secondary">
-        <a href="/logout" class="text-danger"><i class="bi bi-box-arrow-left"></i> Logout</a>
+        <a href="/login" class="text-danger"><i class="bi bi-box-arrow-left"></i> Logout</a>
     </div>
 
     <div class="main-content">
-        
-        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> Operasi Berhasil!
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="mb-4">
+            <h3>Selamat Datang di Panel Control TrashID</h3>
+            <p class="text-muted">Gunakan menu di samping untuk memanajemen sistem penukaran sampah.</p>
         </div>
 
         <div class="row mb-4">
@@ -58,179 +57,6 @@
                         <h2 class="mb-0 fw-bold" th:text="${pendingTransactions.size()}">0</h2>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="card shadow-sm mb-4" id="trx-list">
-            <div class="card-header bg-white py-3">
-                <h5 class="mb-0 text-warning fw-bold"><i class="bi bi-credit-card-2-front-fill"></i> Antrean Penukaran Poin</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Jenis</th>
-                                <th>Poin</th>
-                                <th>No. HP</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="trx : ${pendingTransactions}">
-                                <td th:text="${trx.user.username}" class="fw-bold"></td>
-                                <td th:text="${trx.jenisTransaksi}"></td>
-                                <td class="text-danger fw-bold" th:text="'-' + ${trx.jumlahPoin}"></td>
-                                <td th:text="${trx.user.nomorHp}"></td>
-                                <td>
-                                    <form th:action="@{/admin/transaksi/approve}" method="post" class="d-flex gap-2">
-                                        <input type="hidden" name="id" th:value="${trx.id}">
-                                        <input type="text" name="sn" class="form-control form-control-sm" placeholder="Input SN" required>
-                                        <button type="submit" class="btn btn-sm btn-success">Kirim</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <tr th:if="${pendingTransactions.empty}">
-                                <td colspan="5" class="text-center text-muted py-3">Tidak ada penukaran pending.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="card mb-4" id="admin-list">
-    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 text-primary fw-bold">Daftar Admin</h5>
-        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddAdmin">Tambah Admin</button>
-    </div>
-    <div class="card-body">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>No HP</th>
-                    <th class="text-center">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="adm : ${admins}">
-                    <td th:text="${adm.username}"></td>
-                    <td th:text="${adm.nomorHp}"></td>
-                    <td class="text-center">
-                        <button class="btn btn-sm btn-outline-primary border-0 me-2" 
-                                data-bs-toggle="modal" 
-                                th:data-bs-target="'#modalEdit' + ${adm.id}">
-                            <i class="bi bi-pencil-square"></i>
-                        </button>
-                        
-                        <a th:href="@{/admin/user/delete-admin/{id}(id=${adm.id})}" 
-                           class="btn btn-sm btn-outline-danger border-0" 
-                           onclick="return confirm('Hapus admin?')">
-                            <i class="bi bi-trash"></i>
-                        </a>
-
-                        <div class="modal fade" th:id="'modalEdit' + ${adm.id}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog text-start">
-                                <div class="modal-content">
-                                    <form th:action="@{/admin/user/update-admin}" method="post">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Data Admin: <span th:text="${adm.username}"></span></h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" name="id" th:value="${adm.id}">
-                                            
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold">Username</label>
-                                                <input type="text" class="form-control bg-light" th:value="${adm.username}" readonly>
-                                                <div class="form-text">Username tidak dapat diubah.</div>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold">Nomor HP</label>
-                                                <input type="text" name="noHp" class="form-control" th:value="${adm.nomorHp}" required>
-                                            </div>
-                                            
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold">Password Baru</label>
-                                                <input type="password" name="password" class="form-control" placeholder="Kosongkan jika tidak ingin ganti">
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-        <div class="card mb-4" id="bin-status">
-            <div class="card-header bg-white py-3"><h5 class="mb-0 text-info fw-bold">Status Smart Bin</h5></div>
-            <div class="card-body">
-                <div class="row">
-                    <div th:each="bin : ${bins}" class="col-md-4 mb-3">
-                        <div class="p-3 border rounded bg-light">
-                            <strong th:text="'Bin ID: ' + ${bin.idBin}"></strong>
-                            <div th:text="'Lokasi: ' + ${bin.lokasi}"></div>
-                            <div class="badge bg-primary" th:text="${bin.totalSampah} + ' / ' + ${bin.kapasitas} + ' g'"></div>
-                            <div th:text="${bin.status}" th:class="${bin.status == 'FULL' ? 'text-danger fw-bold' : 'text-success'}"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card" id="item-config">
-            <div class="card-header bg-white py-3"><h5 class="mb-0 text-success fw-bold">Konfigurasi Poin Sampah</h5></div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <form th:action="@{/admin/item/save}" method="post" class="p-3 border rounded bg-light">
-                            <div class="mb-2"><input type="text" name="jenis" class="form-control" placeholder="Jenis Sampah" required></div>
-                            <div class="mb-3"><input type="number" name="nilaiPoinPerGram" class="form-control" placeholder="Poin/gram" required></div>
-                            <button type="submit" class="btn btn-success btn-sm w-100">Simpan</button>
-                        </form>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="row">
-                            <div th:each="i : ${items}" class="col-md-6 mb-2">
-                                <div class="p-2 border rounded d-flex justify-content-between align-items-center bg-white">
-                                    <div>
-                                        <span th:text="${i.jenis}" class="fw-bold"></span>
-                                        <small th:text="${i.nilaiPoinPerGram} + ' pts/g'" class="text-muted ms-2"></small>
-                                    </div>
-                                    <a th:href="@{/admin/item/delete/{id}(id=${i.idItem})}" class="text-danger"><i class="bi bi-x-circle"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="modal fade" id="modalAddAdmin" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form th:action="@{/admin/user/create-admin}" method="post">
-                    <div class="modal-header"><h5 class="modal-title">Tambah Admin Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                    <div class="modal-body">
-                        <div class="mb-3"><input type="text" name="username" class="form-control" placeholder="Username" required></div>
-                        <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Password" required></div>
-                        <div class="mb-3"><input type="text" name="noHp" class="form-control" placeholder="No HP" required></div>
-                    </div>
-                    <div class="modal-footer"><button type="submit" class="btn btn-primary w-100">Simpan</button></div>
-                </form>
             </div>
         </div>
     </div>

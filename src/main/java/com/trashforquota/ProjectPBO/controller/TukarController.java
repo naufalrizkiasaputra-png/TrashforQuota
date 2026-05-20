@@ -1,6 +1,8 @@
 package com.trashforquota.ProjectPBO.controller;
 
+import com.trashforquota.ProjectPBO.model.Transaksi;
 import com.trashforquota.ProjectPBO.model.User;
+import com.trashforquota.ProjectPBO.repository.TransaksiRepository;
 import com.trashforquota.ProjectPBO.repository.UserRepository;
 
 import org.springframework.stereotype.Controller;
@@ -16,10 +18,16 @@ import java.security.Principal;
 public class TukarController {
 
     private final UserRepository userRepository;
+    private final TransaksiRepository transaksiRepository;
 
-    public TukarController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+public TukarController(
+        UserRepository userRepository,
+        TransaksiRepository transaksiRepository
+) {
+
+    this.userRepository = userRepository;
+    this.transaksiRepository = transaksiRepository;
+}
 
     // =========================
     // HALAMAN TUKAR
@@ -109,6 +117,21 @@ public class TukarController {
 
                 // SAVE DATABASE
                 userRepository.save(user);
+                Transaksi transaksi = new Transaksi();
+
+transaksi.setUser(user);
+
+transaksi.setJenisTransaksi("TUKAR_REWARD");
+
+transaksi.setJumlahPoin(poinProduk);
+
+transaksi.setDetail(produk);
+
+transaksi.setStatus("SUCCESS");
+
+transaksi.setBerat(0.0);
+
+transaksiRepository.save(transaksi);
 
                 // POPUP SUCCESS
                 redirectAttributes.addFlashAttribute(

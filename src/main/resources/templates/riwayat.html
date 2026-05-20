@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>Riwayat - TrashID</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+
+        body{
+            background: linear-gradient(to bottom, #eefaf3, #f4f7fb);
+            min-height: 100vh;
+        }
+
+        .hero-box{
+            background: linear-gradient(135deg,#198754,#20c997);
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            color: white;
+        }
+
+        .hero-circle{
+            width: 230px;
+            height: 230px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+            position: absolute;
+            top: -70px;
+            right: -60px;
+        }
+
+        .hero-circle2{
+            width: 160px;
+            height: 160px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+        }
+
+        .section-title{
+            font-weight: 800;
+            color: #198754;
+        }
+
+        .history-card{
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .table{
+            margin-bottom: 0;
+        }
+
+        .table thead{
+            background: #f1fff7;
+        }
+
+        .table thead th{
+            color: #198754;
+            font-weight: 700;
+            border: none;
+            padding: 18px;
+        }
+
+        .table tbody td{
+            padding: 18px;
+            vertical-align: middle;
+            border-color: #f1f1f1;
+        }
+
+        .table tbody tr{
+            transition: .2s;
+        }
+
+        .table tbody tr:hover{
+            background: #f8fffb;
+        }
+
+        .badge-status{
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-success{
+            background: #e9fff3;
+            color: #198754;
+        }
+
+        .status-process{
+            background: #fff8e6;
+            color: #d39e00;
+        }
+
+        .status-failed{
+            background: #ffecec;
+            color: #dc3545;
+        }
+
+        .back-btn{
+            border-radius: 14px;
+            padding: 10px 18px;
+        }
+
+        .info-box{
+            border-radius: 22px;
+            transition: .2s;
+        }
+
+        .info-box:hover{
+            transform: translateY(-3px);
+        }
+
+        .mini-icon{
+            width: 65px;
+            height: 65px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container py-4">
+
+    <!-- BACK -->
+    <a href="/dashboard"
+       class="btn btn-light shadow-sm mb-3 back-btn">
+
+        <i class="bi bi-arrow-left"></i>
+        Kembali
+
+    </a>
+
+    <!-- HERO -->
+    <div class="hero-box shadow-lg p-4 mb-4">
+
+        <div class="hero-circle"></div>
+        <div class="hero-circle2"></div>
+
+        <div class="row align-items-center position-relative">
+
+            <div class="col-md-8">
+
+                <h2 class="fw-bold mb-2">
+                    📜 Riwayat Aktivitas
+                </h2>
+
+                <p class="opacity-75 mb-4">
+
+                    Semua aktivitas scan sampah dan penukaran reward
+                    tersimpan secara realtime.
+
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
+                        ♻️ Scan Sampah
+                    </div>
+
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
+                        🎁 Tukar Reward
+                    </div>
+
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
+                        ⚡ Realtime History
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-4 text-center d-none d-md-block">
+
+                <i class="bi bi-clock-history"
+                   style="font-size:120px;opacity:.9;"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- INFO -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="bg-white shadow-sm p-3 info-box">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="mini-icon bg-success-subtle text-success me-3">
+                        ♻️
+                    </div>
+
+                    <div>
+
+                        <small class="text-muted">
+                            Aktivitas
+                        </small>
+
+                        <h5 class="fw-bold mb-0">
+                            Scan & Reward
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="bg-white shadow-sm p-3 info-box">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="mini-icon bg-warning-subtle text-warning me-3">
+                        ⚡
+                    </div>
+
+                    <div>
+
+                        <small class="text-muted">
+                            Status
+                        </small>
+
+                        <h5 class="fw-bold mb-0">
+                            Realtime Update
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="bg-white shadow-sm p-3 info-box">
+
+                <div class="d-flex align-items-center">
+
+                    <div class="mini-icon bg-info-subtle text-info me-3">
+                        📈
+                    </div>
+
+                    <div>
+
+                        <small class="text-muted">
+                            Sistem
+                        </small>
+
+                        <h5 class="fw-bold mb-0">
+                            Smart Tracking
+                        </h5>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="card border-0 shadow-lg history-card">
+
+        <div class="card-body p-4">
+
+            <div class="mb-4">
+
+                <h4 class="section-title mb-1">
+                    Data Riwayat
+                </h4>
+
+                <small class="text-muted">
+                    Seluruh aktivitas pengguna tersimpan di sini
+                </small>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>Jenis</th>
+                        <th>Detail</th>
+                        <th>Poin</th>
+                        <th>Status</th>
+                        <th>Tanggal</th>
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="t : ${transaksis}">
+
+                        <td class="fw-semibold"
+                            th:text="${t.jenisTransaksi}">
+                        </td>
+
+                        <td th:text="${t.detail}"></td>
+
+                        <td>
+
+                            <span class="fw-bold text-success">
+
+                                +<span th:text="${t.jumlahPoin}"></span>
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge-status status-success"
+                                  th:text="${t.status}">
+                            </span>
+
+                        </td>
+
+                        <td class="text-muted"
+                            th:text="${t.tanggal}">
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

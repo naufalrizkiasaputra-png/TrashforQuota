@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface TransaksiRepository extends JpaRepository<Transaksi, Long> {
     // Mencari riwayat transaksi berdasarkan user tertentu
-    List<Transaksi> findByUserOrderByTanggalDesc(User user);
+        List<Transaksi>
+    findByUserOrderByTanggalDesc(User user);
 }

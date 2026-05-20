@@ -17,6 +17,10 @@ public class Transaksi {
     @JoinColumn(name = "id_user")
     private User user;
 
+    @ManyToOne
+@JoinColumn(name = "id_reward")
+private Reward reward;
+
     @Column(name = "jenis_transaksi")
     private String jenisTransaksi; // Misal: "PULSA", "KUOTA", atau "SETOR_SAMPAH"
 
@@ -29,6 +33,9 @@ public class Transaksi {
     // TAMBAHKAN DUA FIELD INI UNTUK ADMIN
     private String status = "PENDING"; // Default status
     private String serialNumber; // Untuk menyimpan SN Pulsa/Kuota
+
+    @Column(name = "poin_user_id")
+private Long poinUserId;
 
     @Column(name = "tanggal", insertable = false, updatable = false)
     private LocalDateTime tanggal;
