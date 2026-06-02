@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RewardRepository extends JpaRepository<Reward, Long> {
-    // Bisa ditambah method untuk filter berdasarkan provider jika perlu
+    // Karena polimorfisme JPA, repository ini otomatis bisa menyimpan objek KuotaInternet dan Pulsa
 }

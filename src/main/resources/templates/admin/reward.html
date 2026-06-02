@@ -1,138 +1,199 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Kelola Reward - TrashID Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { height: 100vh; width: 250px; position: fixed; background: #212529; padding-top: 20px; z-index: 100; }
-        .sidebar a { padding: 12px 20px; color: #adb5bd; text-decoration: none; display: block; transition: 0.3s; }
-        .sidebar a:hover, .sidebar a.active { color: white; background: #343a40; }
-        .main-content { margin-left: 250px; padding: 30px; }
-        .card { border-radius: 12px; border: none; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
-        .reward-card { border: 1px solid #dee2e6; border-radius: 10px; transition: 0.2s; }
-        .reward-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { height: 100vh; background-color: #212529; color: white; position: fixed; width: 240px; }
+        .sidebar a { color: rgba(255,255,255,0.75); text-decoration: none; padding: 12px 20px; display: block; }
+        .sidebar a:hover, .sidebar a.active { color: white; background-color: #198754; }
+        .main-content { margin-left: 240px; padding: 30px; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .nav-tabs .nav-link { color: #495057; }
+        .nav-tabs .nav-link.active { background-color: #198754; color: white; border-color: #198754; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar shadow">
-        <div class="px-4 mb-4 text-white"><h4>TrashID Admin</h4></div>
-        <a href="/admin/home"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="/admin/daftar-admin"><i class="bi bi-shield-lock"></i> Daftar Admin</a>
-        <a href="/admin/penukaran"><i class="bi bi-credit-card"></i> Penukaran Poin</a>
-        <a href="/admin/reward" class="active"><i class="bi bi-gift"></i> Kelola Reward</a>
-        <a href="/admin/smart-bin"><i class="bi bi-trash"></i> Smart Bin</a>
-        <a href="/admin/konfigurasi"><i class="bi bi-gear"></i> Konfigurasi</a>
-        <hr class="mx-3 text-secondary">
-        <a href="/logout" class="text-danger"><i class="bi bi-box-arrow-left"></i> Logout</a>
+    <div class="sidebar">
+        <div class="p-4 text-center">
+            <h4><i class="fa-solid fa-trash-can text-success"></i> TrashID Admin</h4>
+        </div>
+        <hr class="mx-3 my-0 opacity-25">
+        <div class="py-3">
+            <a th:href="@{/admin/home}"><i class="fa-solid fa-chart-pie me-2"></i> Dashboard</a>
+            <a th:href="@{/admin/penukaran}"><i class="fa-solid fa-receipt me-2"></i> Penukaran Poin</a>
+            <a th:href="@{/admin/reward}" class="active"><i class="fa-solid fa-gift me-2"></i> Kelola Reward</a>
+            <a th:href="@{/admin/smart-bin}"><i class="fa-solid fa-dumpster me-2"></i> Smart Bin</a>
+            <a th:href="@{/admin/konfigurasi}"><i class="fa-solid fa-gear me-2"></i> Konfigurasi</a>
+            <hr class="mx-3 opacity-25">
+            <a th:href="@{/logout}" class="text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a>
+        </div>
     </div>
 
     <div class="main-content">
-        
-        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> Data Reward Berhasil Diperbarui!
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Kelola Reward Terintegrasi</h2>
+            <span class="text-muted" th:text="${#dates.format(#dates.createNow(), 'EEEE, dd MMMM yyyy')}"></span>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i>
+            <span th:text="'Aksi Berhasil: ' + ${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-xmark me-2"></i>
+            <span th:text="'Gagal memproses: ' + ${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
         <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card p-3 bg-white">
-                    <h5 class="fw-bold text-success mb-3"><i class="bi bi-plus-circle-fill"></i> Tambah Pilihan Reward</h5>
+            <div class="col-md-5 mb-4">
+                <div class="card p-4">
+                    <h5 class="mb-3"><i class="fa-solid fa-plus-circle text-success"></i> Tambah Pilihan Reward</h5>
                     
-                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active btn-sm" id="pills-kuota-tab" data-bs-toggle="pill" data-bs-target="#pills-kuota" type="button" role="tab">+ Kuota</button>
+                    <ul class="nav nav-tabs mb-3" id="rewardTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="kuota-tab" data-bs-toggle="tab" data-bs-target="#kuotaForm" type="button" role="tab">+ Kuota</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link btn-sm" id="pills-pulsa-tab" data-bs-toggle="pill" data-bs-target="#pills-pulsa" type="button" role="tab">+ Pulsa</button>
+                        <li class="nav-item">
+                            <button class="nav-link" id="pulsa-tab" data-bs-toggle="tab" data-bs-target="#pulsaForm" type="button" role="tab">+ Pulsa</button>
                         </li>
                     </ul>
 
-                    <div class="tab-content" id="pills-tabContent">
-                        <div class="tab-pane fade show active" id="pills-kuota" role="tabpanel">
-                            <form th:action="@{/admin/reward/save-kuota}" method="post">
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold">Nama Provider / Reward</label>
-                                    <input type="text" name="namaReward" class="form-control" placeholder="Contoh: Telkomsel Internet" required>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold">Jumlah Kuota (GB)</label>
-                                    <input type="number" step="0.1" name="jumlahGb" class="form-control" placeholder="Contoh: 5" required>
-                                </div>
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold">Masa Aktif (Hari)</label>
-                                    <input type="number" name="masaAktifHari" class="form-control" placeholder="Contoh: 7" required>
+                    <div class="tab-content" id="rewardTabContent">
+                        <div class="tab-pane fade show active" id="kuotaForm" role="tabpanel">
+                            <form th:action="@{/admin/reward/save-kuota}" method="POST">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <div class="mb-3">
+                                    <label class="form-label">Nama Paket (Tampilan User)</label>
+                                    <input type="text" name="namaReward" class="form-control" placeholder="Contoh: Telkomsel Extra Untung" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label small fw-bold">Harga Poin</label>
-                                    <input type="number" name="hargaPoin" class="form-control" placeholder="Contoh: 200" required>
+                                    <label class="form-label">Jumlah Kuota (GB)</label>
+                                    <input type="number" step="0.1" name="jumlahGb" class="form-control" placeholder="Contoh: 15" required>
                                 </div>
-                                <button type="submit" class="btn btn-success btn-sm w-100">Simpan Paket Kuota</button>
+                                <div class="mb-3">
+                                    <label class="form-label">Masa Aktif (Hari)</label>
+                                    <input type="number" name="formattingMasaAktif" class="form-control" placeholder="Contoh: 30" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Harga Poin</label>
+                                    <input type="number" name="poinDibutuhkan" class="form-control" placeholder="Contoh: 5000" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">Simpan Paket Kuota</button>
                             </form>
                         </div>
 
-                        <div class="tab-pane fade" id="pills-pulsa" role="tabpanel">
-                            <form th:action="@{/admin/reward/save-pulsa}" method="post">
-                                <div class="mb-2">
-                                    <label class="form-label small fw-bold">Nominal Pulsa</label>
-                                    <input type="text" name="nominal" class="form-control" placeholder="Conteh: Rp 10.000" required>
+                        <div class="tab-pane fade" id="pulsaForm" role="tabpanel">
+                            <form th:action="@{/admin/reward/save-pulsa}" method="POST">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <div class="mb-3">
+                                    <label class="form-label">Nama Provider / Pulsa</label>
+                                    <input type="text" name="namaReward" class="form-control" placeholder="Contoh: Indosat Ooredoo" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label small fw-bold">Harga Poin</label>
-                                    <input type="number" name="hargaPoin" class="form-control" placeholder="Contoh: 150" required>
+                                    <label class="form-label">Nominal Pulsa (Rp)</label>
+                                    <input type="number" name="nominalPulsa" class="form-control" placeholder="Contoh: 25000" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Pulsa</button>
+                                <div class="mb-3">
+                                    <label class="form-label">Harga Poin</label>
+                                    <input type="number" name="poinDibutuhkan" class="form-control" placeholder="Contoh: 3000" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">Simpan Nominal Pulsa</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-8">
-                <div class="card p-3 bg-white mb-4">
-                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-globe"></i> Paket Kuota Aktif</h5>
-                    <div class="row">
-                        <div th:each="k : ${listKuota}" class="col-md-4 mb-3">
-                            <div class="p-3 bg-light reward-card position-relative">
-                                <a th:href="@{/admin/reward/delete-kuota/{id}(id=${k.id})}" class="position-absolute top-0 end-0 p-2 text-danger" onclick="return confirm('Hapus reward ini?')">
-                                    <i class="bi bi-x-circle-fill"></i>
-                                </a>
-                                <div class="text-center">
-                                    <i class="bi bi-phone text-success" style="font-size: 2rem;"></i>
-                                    <h5 th:text="${k.namaPaket}" class="fw-bold mt-2 mb-0"></h5>
-                                    <small th:text="${k.masaAktif}" class="text-muted"></small>
-                                    <div class="badge bg-success d-block mt-2" th:text="${k.hargaPoin} + ' Poin'"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:if="${listKuota.empty}" class="text-center text-muted col-12 py-3">Belum ada paket kuota dimasukkan.</div>
+            <div class="col-md-7">
+                <div class="card p-4 mb-4" style="background-color: #e8f5e9;">
+                    <h5 class="mb-3 text-success"><i class="fa-solid fa-layer-group"></i> Master Gabungan (Tabel: reward)</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover bg-white rounded">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nama Reward</th>
+                                    <th>Provider/Detail</th>
+                                    <th>Poin</th>
+                                    <th class="text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rw : ${listReward}">
+                                    <td th:text="${rw.namaReward}"></td>
+                                    <td th:text="${rw.provider}"></td>
+                                    <td class="text-success fw-bold" th:text="${rw.poinDibutuhkan} + ' Pts'"></td >
+                                    <td class="text-center">
+                                        <a th:href="@{/admin/reward/delete/{id}(id=${rw.idReward})}" class="btn btn-xs btn-danger py-0" onclick="return confirm('Apakah Anda yakin ingin menghapus pilihan reward ini?')"><i class="fa-solid fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listReward)}">
+                                    <td colspan="4" class="text-center text-muted py-2">Belum ada data master reward.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <div class="card p-3 bg-white">
-                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-cash-stack"></i> Nominal Pulsa Aktif</h5>
-                    <div class="row">
-                        <div th:each="p : ${listPulsa}" class="col-md-4 mb-3">
-                            <div class="p-3 bg-light reward-card position-relative">
-                                <a th:href="@{/admin/reward/delete-pulsa/{id}(id=${p.id})}" class="position-absolute top-0 end-0 p-2 text-danger" onclick="return confirm('Hapus reward ini?')">
-                                    <i class="bi bi-x-circle-fill"></i>
-                                </a>
-                                <div class="text-center">
-                                    <i class="bi bi-wallet2 text-primary" style="font-size: 2rem;"></i>
-                                    <h5 th:text="${p.nominal}" class="fw-bold mt-2 mb-0"></h5>
-                                    <div class="badge bg-primary d-block mt-2" th:text="${p.hargaPoin} + ' Poin'"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div th:if="${listPulsa.empty}" class="text-center text-muted col-12 py-3">Belum ada nominal pulsa dimasukkan.</div>
+                <div class="card p-4 mb-4">
+                    <h5 class="mb-3 text-primary"><i class="fa-solid fa-wifi"></i> Data Spesifik Kuota (Tabel: kuota_internet)</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Provider</th>
+                                    <th>Kuota</th>
+                                    <th>Masa Aktif</th>
+                                    <th>Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="k : ${listKuota}">
+                                    <td th:text="${k.namaReward}"></td>
+                                    <td th:text="${k.jumlahGb} + ' GB'"></td>
+                                    <td th:text="${k.masaAktifHari} + ' Hari'"></td>
+                                    <td th:text="${k.poinDibutuhkan} + ' Pts'"></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listKuota)}">
+                                    <td colspan="4" class="text-center text-muted py-2">Belum ada data kuota internet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
+                <div class="card p-4">
+                    <h5 class="mb-3 text-warning"><i class="fa-solid fa-mobile-screen"></i> Data Spesifik Pulsa (Tabel: pulsa)</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Provider</th>
+                                    <th>Nominal</th>
+                                    <th>Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${listPulsa}">
+                                    <td th:text="${p.namaReward}"></td>
+                                    <td th:text="${p.nominalPulsa != null} ? 'Rp ' + ${#numbers.formatInteger(p.nominalPulsa, 0, 'POINT')} : 'Rp 0'"></td>
+                                    <td th:text="${p.poinDibutuhkan} + ' Pts'"></td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(listPulsa)}">
+                                    <td colspan="3" class="text-center text-muted py-2">Belum ada data pulsa.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

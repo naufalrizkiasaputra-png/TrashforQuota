@@ -21,3 +21,4 @@ public class SmartBin {
     // TAMBAHKAN FIELD INI
     private String status = "ACTIVE"; 
 }
+

@@ -35,7 +35,7 @@ public class User {
     private Role role;
 
     public enum Role {
-        ADMIN, USER
+        ADMIN, USER, SUPER_ADMIN
     }
 
     public String getNoHp() { return nomorHp; }

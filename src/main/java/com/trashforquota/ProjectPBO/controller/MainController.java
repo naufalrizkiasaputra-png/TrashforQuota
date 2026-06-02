@@ -53,13 +53,16 @@ public class MainController {
     public String dashboard(Authentication auth) {
         if (auth == null) return "redirect:/login";
 
-        boolean isAdmin = auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        // Cek apakah user yang login adalah ADMIN atau SUPER_ADMIN
+        boolean hasAdminAccess = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || 
+                               a.getAuthority().equals("ROLE_SUPER_ADMIN"));
 
-        if (isAdmin) {
-            return "redirect:/admin/home";
+        if (hasAdminAccess) {
+            return "redirect:/admin/home"; // Keduanya masuk ke dashboard admin yang sama
         }
-        return "redirect:/user/home";
+        
+        return "redirect:/user/home"; // Jika bukan admin, lempar ke home user biasa
     }
 
     @GetMapping("/")

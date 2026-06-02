@@ -1,9 +1,7 @@
 package com.trashforquota.ProjectPBO.controller;
 
-import com.trashforquota.ProjectPBO.model.Transaksi;
-import com.trashforquota.ProjectPBO.model.User;
-import com.trashforquota.ProjectPBO.repository.TransaksiRepository;
-import com.trashforquota.ProjectPBO.repository.UserRepository;
+import com.trashforquota.ProjectPBO.model.*;
+import com.trashforquota.ProjectPBO.repository.*;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,139 +11,153 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 public class TukarController {
 
     private final UserRepository userRepository;
     private final TransaksiRepository transaksiRepository;
+    private final KuotaInternetRepository kuotaInternetRepository;
+    private final PulsaRepository pulsaRepository;
 
-public TukarController(
-        UserRepository userRepository,
-        TransaksiRepository transaksiRepository
-) {
-
-    this.userRepository = userRepository;
-    this.transaksiRepository = transaksiRepository;
-}
-
-    // =========================
-    // HALAMAN TUKAR
-    // =========================
-    @GetMapping("/tukar")
-    public String tukarPage(Model model,
-                            Principal principal) {
-
-        String username = principal.getName();
-
-        User user = userRepository
-                .findByUsername(username)
-                .orElse(null);
-
-        if (user != null) {
-
-            model.addAttribute(
-                    "noHp",
-                    user.getNomorHp()
-            );
-
-            model.addAttribute(
-                    "user",
-                    user
-            );
-        }
-
-        return "tukar";
+    // Constructor untuk Dependency Injection
+    public TukarController(
+            UserRepository userRepository,
+            TransaksiRepository transaksiRepository,
+            KuotaInternetRepository kuotaInternetRepository,
+            PulsaRepository pulsaRepository
+    ) {
+        this.userRepository = userRepository;
+        this.transaksiRepository = transaksiRepository;
+        this.kuotaInternetRepository = kuotaInternetRepository;
+        this.pulsaRepository = pulsaRepository;
     }
 
-    // =========================
-    // PROSES TUKAR
-    // =========================
-    @PostMapping("/tukar")
-    public String prosesTukar(
-
-            @RequestParam("nohp") String nohp,
-            @RequestParam("produk") String produk,
-            Principal principal,
-            RedirectAttributes redirectAttributes
-
-    ) {
+    // ==========================================
+    // 1. HALAMAN TUKAR POIN (SISI USER) - AMAN NYAMAN
+    // ==========================================
+    @GetMapping("/tukar")
+    public String tukarPage(Model model, Principal principal) {
+        
+        // Proteksi awal jika session principal kosong atau null untuk mencegah Error 500
+        if (principal == null) {
+            System.out.println("=== LOG WARNING: Principal null, mengalihkan ke login ===");
+            return "redirect:/login";
+        }
 
         String username = principal.getName();
-
-        User user = userRepository
-                .findByUsername(username)
-                .orElse(null);
+        User user = userRepository.findByUsername(username).orElse(null);
 
         if (user != null) {
+            model.addAttribute("noHp", user.getNomorHp());
+            model.addAttribute("user", user);
+            
+            // Atribut tambahan agar sinkron dengan berbagai kemungkinan pemanggilan di tukar.html
+            model.addAttribute("userPoin", user.getPoin());
+            model.addAttribute("username", user.getUsername());
+        } else {
+            // Fallback safety data
+            model.addAttribute("userPoin", 0);
+            model.addAttribute("username", "Guest");
+        }
 
+        try {
+            // AMBIL DATA DARI DATABASE SECARA DINAMIS
+            List<KuotaInternet> listKuota = kuotaInternetRepository.findAll();
+            List<Pulsa> listPulsa = pulsaRepository.findAll();
+
+            // OPER DATA KE VIEW TIMELINE / TEMPLATE USER
+            model.addAttribute("listKuota", listKuota);
+            model.addAttribute("listPulsa", listPulsa);
+            
+        } catch (Exception e) {
+            System.err.println("=== LOG CRITICAL: Gagal mengambil list data reward dari database ===");
+            e.printStackTrace();
+            // Kirim list kosong agar mesin parser Thymeleaf tidak error/crash
+            model.addAttribute("listKuota", Collections.emptyList());
+            model.addAttribute("listPulsa", Collections.emptyList());
+        }
+
+        return "tukar"; // Mengarah ke file src/main/resources/templates/tukar.html
+    }
+
+    // ==========================================
+    // 2. PROSES TUKAR REWARD (KUOTA & PULSA)
+    // ==========================================
+    @PostMapping("/tukar")
+    public String prosesTukar(
+            @RequestParam("nohp") String nohp,
+            @RequestParam("rewardId") Long rewardId,
+            @RequestParam("jenisReward") String jenisReward, // Nilai wajib: "KUOTA" atau "PULSA"
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username).orElse(null);
+
+        if (user != null) {
             int poinProduk = 0;
+            String detailProduk = "";
 
             try {
-
-                // contoh:
-                // "10 GB - 400 poin"
-
-                String angka =
-                        produk.replaceAll("[^0-9]", " ");
-
-                String[] parts =
-                        angka.trim().split("\\s+");
-
-                poinProduk =
-                        Integer.parseInt(
-                                parts[parts.length - 1]
-                        );
-
+                // CARI DATA REWARD SEBENARNYA DARI DATABASE BERDASARKAN ID
+                if ("KUOTA".equalsIgnoreCase(jenisReward)) {
+                    KuotaInternet kuota = kuotaInternetRepository.findById(rewardId).orElse(null);
+                    if (kuota != null) {
+                        poinProduk = kuota.getPoinDibutuhkan();
+                        detailProduk = kuota.getNamaReward() + " " + kuota.getJumlahGb() + " GB (" + kuota.getMasaAktifHari() + " Hari)";
+                    }
+                } else if ("PULSA".equalsIgnoreCase(jenisReward)) {
+                    Pulsa pulsa = pulsaRepository.findById(rewardId).orElse(null);
+                    if (pulsa != null) {
+                        poinProduk = pulsa.getPoinDibutuhkan();
+                        detailProduk = pulsa.getNamaReward() + " Rp " + pulsa.getNominalPulsa();
+                    }
+                }
             } catch (Exception e) {
-
+                System.err.println("=== LOG ERROR: Gagal mencari detail ID reward di database ===");
                 e.printStackTrace();
+                redirectAttributes.addFlashAttribute("error", "Terjadi kegagalan system database saat memproses reward! 😢");
+                return "redirect:/tukar";
+            }
+
+            // Validasi jika produk tidak ditemukan atau ID salah
+            if (poinProduk == 0) {
+                redirectAttributes.addFlashAttribute("error", "Reward tidak ditemukan atau tidak valid! 😢");
+                return "redirect:/tukar";
             }
 
             // =========================
-            // CEK POIN
+            // VALIDASI & POTONG POIN USER
             // =========================
             if (user.getPoin() >= poinProduk) {
-
-                // POTONG POIN
-                user.setPoin(
-                        user.getPoin() - poinProduk
-                );
-
-                // UPDATE NOMOR HP
+                // POTONG POIN USER
+                user.setPoin(user.getPoin() - poinProduk);
+                
+                // UPDATE NOMOR HP JIKA BERUBAH
                 user.setNomorHp(nohp);
-
-                // SAVE DATABASE
                 userRepository.save(user);
+
+                // SIMPAN TRANSAKSI KE DATABASE (Status PENDING agar divalidasi admin di backend)
                 Transaksi transaksi = new Transaksi();
+                transaksi.setUser(user);
+                transaksi.setJenisTransaksi("TUKAR_REWARD");
+                transaksi.setJumlahPoin(poinProduk);
+                transaksi.setDetail(detailProduk);
+                transaksi.setStatus("PENDING"); // Masuk ke antrean persetujuan dashboard admin
 
-transaksi.setUser(user);
+                transaksiRepository.save(transaksi);
 
-transaksi.setJenisTransaksi("TUKAR_REWARD");
-
-transaksi.setJumlahPoin(poinProduk);
-
-transaksi.setDetail(produk);
-
-transaksi.setStatus("SUCCESS");
-
-transaksi.setBerat(0.0);
-
-transaksiRepository.save(transaksi);
-
-                // POPUP SUCCESS
-                redirectAttributes.addFlashAttribute(
-                        "success",
-                        "Reward berhasil ditukarkan 🎉"
-                );
-
+                redirectAttributes.addFlashAttribute("success", "Permintaan penukaran " + detailProduk + " berhasil dikirim! Menunggu konfirmasi admin. 🎉");
             } else {
-
-                // POPUP ERROR
-                redirectAttributes.addFlashAttribute(
-                        "error",
-                        "Poin kamu tidak cukup 😢"
-                );
+                redirectAttributes.addFlashAttribute("error", "Poin kamu tidak cukup untuk menukar " + detailProduk + " 😢");
             }
         }
 

@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface KuotaInternetRepository extends JpaRepository<KuotaInternet, Long> {
-    // JpaRepository sudah menyediakan fungsi standar seperti findAll(), save(), deleteById(), dll.
 }

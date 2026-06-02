@@ -43,9 +43,9 @@ public class RewardService {
         // t.setReward(reward); // Aktifkan jika di Entity Transaksi ada field reward
         t.setJenisTransaksi("TUKAR_REWARD");
         t.setJumlahPoin(-reward.getPoinDibutuhkan()); // Simpan minus untuk penukaran
-        t.setDetail("Tukar Reward: " + reward.getNamaReward() + " (" + reward.getProvider() + ")");
-        t.setBerat(0.0); // Reward tidak ada berat, set 0 sesuai kolom DB[cite: 1]
-        
+        // Provider accessor not present on Reward entity; include only reward name
+        t.setDetail("Tukar Reward: " + reward.getNamaReward());
+
         transaksiRepository.save(t);
 
         return "Berhasil menukar poin dengan " + reward.getNamaReward();

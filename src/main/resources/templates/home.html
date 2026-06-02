@@ -98,6 +98,23 @@
             display: inline-block;
         }
 
+        #notificationBell:hover {
+            transform: scale(1.1);
+            background-color: #157347 !important;
+        }
+        /* Mempercantik scrollbar dropdown notifikasi jika daftarnya panjang */
+        .dropdown-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+        .dropdown-menu::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .dropdown-menu::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
     </style>
 </head>
 
@@ -105,13 +122,12 @@
 
 <div class="container py-4">
 
-    <!-- TOP BAR -->
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <div>
 
             <h3 class="fw-bold text-success mb-0">
-                TrashID ♻️
+                TrashForQuota ♻️
             </h3>
 
             <small class="text-muted">
@@ -133,7 +149,6 @@
 
     </div>
 
-    <!-- HERO -->
     <div class="hero-box shadow-lg p-4 mb-4">
 
         <div class="hero-circle"></div>
@@ -146,7 +161,7 @@
                 <h2 class="fw-bold mb-2">
 
                     Halo,
-                    <span th:text="${user.username}">
+                    <span th:text="${user != null ? user.username : 'User'}">
                         User
                     </span> 👋
 
@@ -186,7 +201,7 @@
 
                     <h1 class="fw-bold mb-0">
 
-                        <span th:text="${user.poin}">
+                        <span th:text="${user != null ? user.poin : 0}">
                             0
                         </span>
 
@@ -200,7 +215,6 @@
 
     </div>
 
-    <!-- INFO -->
     <div class="row g-3 mb-4">
 
         <div class="col-md-4">
@@ -289,7 +303,6 @@
 
     </div>
 
-    <!-- MENU -->
     <div class="card border-0 shadow-lg">
 
         <div class="card-body p-4">
@@ -308,10 +321,9 @@
 
             <div class="row g-4">
 
-                <!-- SCAN -->
                 <div class="col-md-4">
 
-                    <a href="/scan"
+                    <a href="/user/scan"
                        class="text-decoration-none text-dark">
 
                         <div class="menu-card shadow-sm p-4">
@@ -334,7 +346,6 @@
 
                 </div>
 
-                <!-- TUKAR -->
                 <div class="col-md-4">
 
                     <a href="/tukar"
@@ -360,7 +371,6 @@
 
                 </div>
 
-                <!-- RIWAYAT -->
                 <div class="col-md-4">
 
                     <a href="/riwayat"
@@ -386,7 +396,6 @@
 
                 </div>
 
-                <!-- PROFIL -->
                 <div class="col-md-4">
 
                     <a href="/user/profil"
@@ -412,7 +421,6 @@
 
                 </div>
 
-                <!-- LEADERBOARD -->
                 <div class="col-md-4">
 
                     <a href="/user/leaderboard"
@@ -438,7 +446,6 @@
 
                 </div>
 
-                <!-- INFO -->
                 <div class="col-md-4">
 
                     <a href="/user/info"
@@ -472,5 +479,68 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1050;">
+    <div class="dropdown">
+        <button class="btn btn-success rounded-circle p-0 d-flex align-items-center justify-content-center shadow-lg position-relative" 
+                id="notificationBell" 
+                data-bs-toggle="dropdown" 
+                aria-expanded="false" 
+                style="width: 60px; height: 60px; transition: transform 0.2s;">
+            <i class="bi bi-bell-fill fs-4 text-white"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                  th:if="${listTransaksiPending != null && !listTransaksiPending.isEmpty()}"
+                  th:text="${listTransaksiPending.size()}">
+                0
+            </span>
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-3" 
+             aria-labelledby="notificationBell" 
+             style="width: 360px; max-height: 420px; overflow-y: auto; border-radius: 20px; bottom: 70px; right: 0;">
+            
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                <h6 class="fw-bold mb-0 text-success"><i class="bi bi-chat-left-dots-fill me-1"></i> Notifikasi Kamu</h6>
+                <span class="badge bg-success-subtle text-success fw-bold px-2.5 py-1" 
+                      th:text="${listTransaksiPending != null ? listTransaksiPending.size() + ' Pending' : '0 Pending'}">
+                    0 Pending
+                </span>
+            </div>
+
+            <div class="text-center py-4" th:if="${listTransaksiPending == null || listTransaksiPending.isEmpty()}">
+                <div class="fs-1 mb-2">🔔</div>
+                <p class="text-muted small mb-0">Semua permintaan Anda sudah diproses oleh admin!</p>
+            </div>
+
+            <div th:each="trx : ${listTransaksiPending}" class="mb-2">
+                <div class="p-3 rounded-4 position-relative border-start border-4" 
+                     th:classappend="${trx.status == 'PENDING' ? 'bg-warning-subtle text-warning-emphasis border-warning' : 'bg-success-subtle text-success-emphasis border-success'}"
+                     style="font-size: 13px;">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-dark">
+                            <i class="bi bi-hourglass-split me-1 text-warning"></i> Menunggu Approval
+                        </span>
+                        <span class="text-muted fw-mono" style="font-size: 11px;">#Trx</span>
+                    </div>
+                    
+                    <p class="mb-1 text-secondary" style="line-height: 1.4;">
+                        Permintaan penukaran poin untuk produk <strong class="text-dark" th:text="${trx.detail}">Item Digital</strong> sedang ditinjau.
+                    </p>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-2 pt-1 border-top border-warning-subtle">
+                        <span class="small text-muted">Biaya Poin:</span>
+                        <span class="badge bg-warning text-dark fw-bold" th:text="${trx.jumlahPoin} + ' Poin'">0 Poin</span>
+                    </div>
+
+                    <a th:href="@{/riwayat}" class="stretched-link d-block mt-1 text-end text-decoration-none text-warning-emphasis fw-bold" style="font-size: 11px;">
+                        Lihat Riwayat <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 </body>
 </html>

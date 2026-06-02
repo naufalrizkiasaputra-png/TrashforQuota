@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PulsaRepository extends JpaRepository<Pulsa, Long> {
-    // Fungsi bawaan CRUD otomatis aktif untuk entity Pulsa
 }

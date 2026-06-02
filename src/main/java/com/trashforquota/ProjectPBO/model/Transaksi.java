@@ -1,48 +1,107 @@
 package com.trashforquota.ProjectPBO.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "transaksi")
 public class Transaksi {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_transaksi")
-    private Long id; // Gunakan 'id' saja agar sinkron dengan controller .findById(id)
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-@JoinColumn(name = "id_reward")
-private Reward reward;
+    // Menyimpan jumlah poin (bisa poin yang berkurang saat tukar reward, atau poin bertambah saat setor sampah)
+    private double jumlahPoin;
 
-    @Column(name = "jenis_transaksi")
-    private String jenisTransaksi; // Misal: "PULSA", "KUOTA", atau "SETOR_SAMPAH"
+    // Status transaksi: "PENDING", "DISETUJUI", "DITOLAK"
+    private String status;
 
-    @Column(name = "jumlah_poin")
-    private int jumlahPoin;
+    // Pembeda transaksi: "SETOR_SAMPAH" atau "TUKAR_REWARD"
+    private String jenisTransaksi;
 
-    private Double berat;
+    // Catatan tambahan (misal: "Penukaran Telkomsel 5GB" atau "Setor Sampah Botol Plastik")
     private String detail;
-    
-    // TAMBAHKAN DUA FIELD INI UNTUK ADMIN
-    private String status = "PENDING"; // Default status
-    private String serialNumber; // Untuk menyimpan SN Pulsa/Kuota
 
-    @Column(name = "poin_user_id")
-private Long poinUserId;
-
-    @Column(name = "tanggal", insertable = false, updatable = false)
+    // Waktu pencatatan transaksi secara otomatis
     private LocalDateTime tanggal;
 
-    // Hibernate membutuhkan ini jika tanggal otomatis dari DB
-    @PrePersist
-    protected void onCreate() {
-        this.tanggal = LocalDateTime.now();
+    // Relasi opsional ke Reward (bisa bernilai null jika jenisTransaksi adalah "SETOR_SAMPAH")
+    @ManyToOne
+    @JoinColumn(name = "reward_id", nullable = true)
+    private Reward reward;
+
+    // --- CONSTRUCTOR ---
+    public Transaksi() {
+        this.tanggal = LocalDateTime.now(); // Set waktu otomatis saat objek dibuat
+    }
+
+    // --- GETTER AND SETTER ---
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public double getJumlahPoin() {
+        return jumlahPoin;
+    }
+
+    public void setJumlahPoin(double jumlahPoin) {
+        this.jumlahPoin = jumlahPoin;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getJenisTransaksi() {
+        return jenisTransaksi;
+    }
+
+    public void setJenisTransaksi(String jenisTransaksi) {
+        this.jenisTransaksi = jenisTransaksi;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public LocalDateTime getTanggal() {
+        return tanggal;
+    }
+
+    public void setTanggal(LocalDateTime tanggal) {
+        this.tanggal = tanggal;
+    }
+
+    public Reward getReward() {
+        return reward;
+    }
+
+    public void setReward(Reward reward) {
+        this.reward = reward;
     }
 }
