@@ -1,0 +1,112 @@
+/* ==========================================
+   GLOBAL STYLE - TRASHID
+   ========================================== */
+
+body {
+    background: linear-gradient(to bottom, #eefaf3, #f4f7fb);
+    min-height: 100vh;
+}
+
+/* HERO SECTION */
+.hero-box {
+    background: linear-gradient(135deg, #198754, #20c997);
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+    color: white;
+}
+
+.hero-circle {
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    position: absolute;
+    top: -70px;
+    right: -60px;
+}
+
+.hero-circle2 {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: -50px;
+    left: -40px;
+}
+
+/* CARD MENU */
+.menu-card {
+    border-radius: 24px;
+    transition: .25s;
+    overflow: hidden;
+    border: none;
+    height: 100%;
+    background: white;
+}
+
+.menu-card:hover {
+    transform: translateY(-6px);
+}
+
+.menu-icon {
+    width: 75px;
+    height: 75px;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    margin-bottom: 20px;
+}
+
+/* INFO SECTION */
+.section-title {
+    font-weight: 800;
+    color: #198754;
+}
+
+.info-card {
+    border-radius: 22px;
+    transition: .2s;
+}
+
+.info-card:hover {
+    transform: translateY(-3px);
+}
+
+/* BADGES & BUTTONS */
+.nav-btn {
+    border-radius: 14px;
+    padding: 10px 18px;
+}
+
+.point-badge {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 10px 18px;
+    display: inline-block;
+}
+
+/* NOTIFICATION COMPONENTS */
+#notificationBell:hover {
+    transform: scale(1.1);
+    background-color: #157347 !important;
+}
+
+/* CUSTOM SCROLLBAR FOR DROPDOWN NOTIFICATION */
+.dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}

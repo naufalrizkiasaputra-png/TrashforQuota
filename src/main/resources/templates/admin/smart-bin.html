@@ -111,14 +111,15 @@
             color: #198754;
         }
 
+        /* Warna FULL disesuaikan menjadi merah tegas agar menarik perhatian admin */
         .status-full{
-            background: #fff3cd;
-            color: #856404;
+            background: #f8d7da;
+            color: #842029;
         }
 
         .status-offline{
-            background: #f8d7da;
-            color: #842029;
+            background: #e2e3e5;
+            color: #41464b;
         }
 
         .hero-box{
@@ -145,7 +146,6 @@
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar shadow">
 
     <div class="brand-area d-flex align-items-center">
@@ -186,9 +186,9 @@
         </a>
 
         <a href="/admin/sampah">
-    <i class="bi bi-upc-scan me-2"></i>
-    Scan 
-</a>
+            <i class="bi bi-upc-scan me-2"></i>
+            Kategori - Sampah 
+        </a>
 
         <hr class="mx-3 text-white-50">
 
@@ -221,10 +221,8 @@
 
 </div>
 
-<!-- MAIN -->
 <div class="main-content">
 
-    <!-- HERO -->
     <div class="hero-box p-4 mb-4 shadow">
 
         <div class="hero-circle"></div>
@@ -255,7 +253,6 @@
 
     </div>
 
-    <!-- FORM -->
     <div class="card mb-4">
 
         <div class="card-body p-4">
@@ -269,7 +266,7 @@
                     </h4>
 
                     <small class="text-muted">
-                        Tambahkan lokasi monitoring baru
+                        Tambahkan lokasi monitoring baru (Total sampah otomatis dimulai dari 0 Kg)
                     </small>
 
                 </div>
@@ -289,7 +286,7 @@
 
                 <div class="row">
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-5 mb-3">
 
                         <label class="fw-semibold mb-2">
                             Lokasi
@@ -303,10 +300,10 @@
 
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
 
                         <label class="fw-semibold mb-2">
-                            Kapasitas
+                            Kapasitas Maksimal (Kg)
                         </label>
 
                         <input type="number"
@@ -318,25 +315,10 @@
 
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-3 mb-4">
 
                         <label class="fw-semibold mb-2">
-                            Total Sampah
-                        </label>
-
-                        <input type="number"
-                               step="0.1"
-                               name="totalSampah"
-                               class="form-control"
-                               placeholder="Contoh: 45"
-                               required>
-
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-
-                        <label class="fw-semibold mb-2">
-                            Status
+                            Status Awal
                         </label>
 
                         <select name="status"
@@ -344,10 +326,6 @@
 
                             <option value="ACTIVE">
                                 ACTIVE
-                            </option>
-
-                            <option value="FULL">
-                                FULL
                             </option>
 
                             <option value="OFFLINE">
@@ -373,7 +351,6 @@
 
     </div>
 
-    <!-- TABLE -->
     <div class="card">
 
         <div class="card-body p-4">
@@ -437,49 +414,69 @@
 
                         <td>
 
-<span th:if="${b.status == 'ACTIVE'}"
-      class="status-badge status-active">
+                            <span th:if="${b.status == 'ACTIVE'}"
+                                  class="status-badge status-active">
+                                ACTIVE
+                            </span>
 
-    ACTIVE
+                            <span th:if="${b.status == 'FULL'}"
+                                  class="status-badge status-full">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> FULL
+                            </span>
 
-</span>
-
-<span th:if="${b.status == 'FULL'}"
-      class="status-badge status-full">
-
-    FULL
-
-</span>
-
-<span th:if="${b.status == 'OFFLINE'}"
-      class="status-badge status-offline">
-
-    OFFLINE
-
-</span>
+                            <span th:if="${b.status == 'OFFLINE'}"
+                                  class="status-badge status-offline">
+                                OFFLINE
+                            </span>
 
                         </td>
 
                         <td class="text-center">
+                            
+                            <div class="d-flex justify-content-center gap-2">
+                                
+                                <form th:action="@{/admin/smart-bins/reset/{id}(id=${b.idBin})}"
+                                      method="post"
+                                      onsubmit="return confirm('Apakah Anda yakin ingin mengosongkan sampah di unit ini?');">
+                                    
+                                    <input type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}">
+                                    
+                                    <button type="submit" 
+                                            class="btn btn-warning btn-sm rounded-pill px-3 fw-medium text-dark"
+                                            th:disabled="${b.totalSampah == 0}">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                        Kosongkan
+                                    </button>
+                                    
+                                </form>
+                                
+                                <form th:action="@{/admin/smart-bins/delete/{id}(id=${b.idBin})}"
+                                      method="post"
+                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus SmartBin ini?');">
 
-<form th:action="@{/admin/smart-bins/delete/{id}(id=${b.idBin})}"
-      method="post">
+                                    <input type="hidden"
+                                           th:name="${_csrf.parameterName}"
+                                           th:value="${_csrf.token}">
 
-    <input type="hidden"
-           th:name="${_csrf.parameterName}"
-           th:value="${_csrf.token}">
+                                    <button class="btn btn-danger btn-sm rounded-pill px-3">
 
-    <button class="btn btn-danger btn-sm rounded-pill px-3">
+                                        <i class="bi bi-trash"></i>
+                                        Hapus
 
-        <i class="bi bi-trash"></i>
-        Hapus
+                                    </button>
 
-    </button>
-
-</form>
+                                </form>
+                                
+                            </div>
 
                         </td>
 
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(bins)}">
+                        <td colspan="6" class="text-center text-muted py-4">Belum ada unit SmartBin terdaftar.</td>
                     </tr>
 
                     </tbody>
@@ -494,7 +491,6 @@
 
 </div>
 
-<!-- SWEET ALERT -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script th:inline="javascript">

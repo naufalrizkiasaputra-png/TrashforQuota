@@ -1,121 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8">
     <title>Dashboard - TrashID</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
-    <style>
-
-        body{
-            background: linear-gradient(to bottom, #eefaf3, #f4f7fb);
-            min-height: 100vh;
-        }
-
-        /* HERO */
-
-        .hero-box{
-            background: linear-gradient(135deg,#198754,#20c997);
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            color: white;
-        }
-
-        .hero-circle{
-            width: 240px;
-            height: 240px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.08);
-            position: absolute;
-            top: -70px;
-            right: -60px;
-        }
-
-        .hero-circle2{
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            position: absolute;
-            bottom: -50px;
-            left: -40px;
-        }
-
-        /* CARD */
-
-        .menu-card{
-            border-radius: 24px;
-            transition: .25s;
-            overflow: hidden;
-            border: none;
-            height: 100%;
-            background: white;
-        }
-
-        .menu-card:hover{
-            transform: translateY(-6px);
-        }
-
-        .menu-icon{
-            width: 75px;
-            height: 75px;
-            border-radius: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 34px;
-            margin-bottom: 20px;
-        }
-
-        .section-title{
-            font-weight: 800;
-            color: #198754;
-        }
-
-        .info-card{
-            border-radius: 22px;
-            transition: .2s;
-        }
-
-        .info-card:hover{
-            transform: translateY(-3px);
-        }
-
-        .logout-btn{
-            border-radius: 14px;
-            padding: 10px 18px;
-        }
-
-        .point-badge{
-            background: rgba(255,255,255,0.18);
-            backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 10px 18px;
-            display: inline-block;
-        }
-
-        #notificationBell:hover {
-            transform: scale(1.1);
-            background-color: #157347 !important;
-        }
-        /* Mempercantik scrollbar dropdown notifikasi jika daftarnya panjang */
-        .dropdown-menu::-webkit-scrollbar {
-            width: 6px;
-        }
-        .dropdown-menu::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .dropdown-menu::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 10px;
-        }
-
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
@@ -125,27 +17,34 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <div>
-
             <h3 class="fw-bold text-success mb-0">
                 TrashForQuota ♻️
             </h3>
-
             <small class="text-muted">
                 Smart Recycling Dashboard
             </small>
-
         </div>
 
-        <form th:action="@{/logout}" method="post">
+        <div class="d-flex align-items-center gap-2">
+            
+            <div th:if="${#authorization.expression('hasRole(''SUPER_ADMIN'')')}">
+                <a href="/admin/home" class="btn btn-success shadow-sm nav-btn fw-semibold text-white">
+                    <i class="bi bi-speedometer2 me-1"></i> Dashboard Admin
+                </a>
+            </div>
+            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <a href="/admin/home" class="btn btn-success shadow-sm nav-btn fw-semibold text-white">
+                    <i class="bi bi-speedometer2 me-1"></i> Dashboard Admin
+                </a>
+            </div>
 
-            <button class="btn btn-light shadow-sm logout-btn fw-semibold">
-
-                <i class="bi bi-box-arrow-right me-1"></i>
-                Logout
-
-            </button>
-
-        </form>
+            <form th:action="@{/logout}" method="post" class="mb-0">
+                <button class="btn btn-light shadow-sm nav-btn fw-semibold">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </button>
+            </form>
+            
+        </div>
 
     </div>
 
@@ -157,58 +56,26 @@
         <div class="row align-items-center position-relative">
 
             <div class="col-md-8">
-
                 <h2 class="fw-bold mb-2">
-
-                    Halo,
-                    <span th:text="${user != null ? user.username : 'User'}">
-                        User
-                    </span> 👋
-
+                    Halo, <span th:text="${user != null ? user.username : 'User'}">User</span> 👋
                 </h2>
-
                 <p class="opacity-75 mb-4">
-
-                    Kelola sampah jadi reward digital.
-                    Scan sampah, kumpulkan poin,
-                    lalu tukarkan menjadi kuota atau pulsa.
-
+                    Kelola sampah jadi reward digital. Scan sampah, kumpulkan poin, lalu lakukan penukaran menjadi kuota atau pulsa.
                 </p>
-
                 <div class="d-flex flex-wrap gap-3">
-
-                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
-                        ♻️ Eco Friendly
-                    </div>
-
-                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
-                        ⚡ Realtime Point
-                    </div>
-
-                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">
-                        🎁 Reward Digital
-                    </div>
-
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">♻️ Eco Friendly</div>
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">⚡ Realtime Point</div>
+                    <div class="bg-white text-success px-3 py-2 rounded-pill fw-bold">🎁 Reward Digital</div>
                 </div>
-
             </div>
 
             <div class="col-md-4 text-center d-none d-md-block">
-
                 <div class="point-badge">
-
                     <small>Total Poin</small>
-
                     <h1 class="fw-bold mb-0">
-
-                        <span th:text="${user != null ? user.poin : 0}">
-                            0
-                        </span>
-
+                        <span th:text="${user != null ? user.poin : 0}">0</span>
                     </h1>
-
                 </div>
-
             </div>
 
         </div>
@@ -218,87 +85,39 @@
     <div class="row g-3 mb-4">
 
         <div class="col-md-4">
-
             <div class="bg-white shadow-sm p-3 info-card">
-
                 <div class="d-flex align-items-center">
-
-                    <div class="menu-icon bg-success-subtle text-success me-3 mb-0">
-                        ♻️
-                    </div>
-
+                    <div class="menu-icon bg-success-subtle text-success me-3 mb-0">♻️</div>
                     <div>
-
-                        <small class="text-muted">
-                            Aktivitas
-                        </small>
-
-                        <h5 class="fw-bold mb-0">
-                            Scan Sampah
-                        </h5>
-
+                        <small class="text-muted">Aktivitas</small>
+                        <h5 class="fw-bold mb-0">Scan Sampah</h5>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
         <div class="col-md-4">
-
             <div class="bg-white shadow-sm p-3 info-card">
-
                 <div class="d-flex align-items-center">
-
-                    <div class="menu-icon bg-warning-subtle text-warning me-3 mb-0">
-                        🎁
-                    </div>
-
+                    <div class="menu-icon bg-warning-subtle text-warning me-3 mb-0">🎁</div>
                     <div>
-
-                        <small class="text-muted">
-                            Reward
-                        </small>
-
-                        <h5 class="fw-bold mb-0">
-                            Kuota & Pulsa
-                        </h5>
-
+                        <small class="text-muted">Reward</small>
+                        <h5 class="fw-bold mb-0">Kuota & Pulsa</h5>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
         <div class="col-md-4">
-
             <div class="bg-white shadow-sm p-3 info-card">
-
                 <div class="d-flex align-items-center">
-
-                    <div class="menu-icon bg-info-subtle text-info me-3 mb-0">
-                        📈
-                    </div>
-
+                    <div class="menu-icon bg-info-subtle text-info me-3 mb-0">📈</div>
                     <div>
-
-                        <small class="text-muted">
-                            Sistem
-                        </small>
-
-                        <h5 class="fw-bold mb-0">
-                            Smart Recycling
-                        </h5>
-
+                        <small class="text-muted">Sistem</small>
+                        <h5 class="fw-bold mb-0">Smart Recycling</h5>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
     </div>
@@ -308,167 +127,70 @@
         <div class="card-body p-4">
 
             <div class="mb-4">
-
-                <h4 class="section-title mb-1">
-                    Menu Utama
-                </h4>
-
-                <small class="text-muted">
-                    Pilih fitur yang ingin digunakan
-                </small>
-
+                <h4 class="section-title mb-1">Menu Utama</h4>
+                <small class="text-muted">Pilih fitur yang ingin digunakan</small>
             </div>
 
             <div class="row g-4">
 
                 <div class="col-md-4">
-
-                    <a href="/user/scan"
-                       class="text-decoration-none text-dark">
-
+                    <a href="/user/scan" class="text-decoration-none text-dark">
                         <div class="menu-card shadow-sm p-4">
-
-                            <div class="menu-icon bg-success-subtle text-success">
-                                ♻️
-                            </div>
-
-                            <h5 class="fw-bold">
-                                Scan Sampah
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                Input sampah dan dapatkan poin otomatis.
-                            </p>
-
+                            <div class="menu-icon bg-success-subtle text-success">♻️</div>
+                            <h5 class="fw-bold">Scan Sampah</h5>
+                            <p class="text-muted mb-0">Input sampah dan dapatkan poin otomatis.</p>
                         </div>
-
                     </a>
-
                 </div>
 
                 <div class="col-md-4">
-
-                    <a href="/tukar"
-                       class="text-decoration-none text-dark">
-
+                    <a href="/tukar" class="text-decoration-none text-dark">
                         <div class="menu-card shadow-sm p-4">
-
-                            <div class="menu-icon bg-warning-subtle text-warning">
-                                🎁
-                            </div>
-
-                            <h5 class="fw-bold">
-                                Tukar Poin
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                Tukarkan poin menjadi pulsa atau kuota.
-                            </p>
-
+                            <div class="menu-icon bg-warning-subtle text-warning">🎁</div>
+                            <h5 class="fw-bold">Tukar Poin</h5>
+                            <p class="text-muted mb-0">Tukarkan poin menjadi pulsa atau kuota.</p>
                         </div>
-
                     </a>
-
                 </div>
 
                 <div class="col-md-4">
-
-                    <a href="/riwayat"
-                       class="text-decoration-none text-dark">
-
+                    <a href="/riwayat" class="text-decoration-none text-dark">
                         <div class="menu-card shadow-sm p-4">
-
-                            <div class="menu-icon bg-info-subtle text-info">
-                                📜
-                            </div>
-
-                            <h5 class="fw-bold">
-                                Riwayat
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                Lihat histori scan dan transaksi reward.
-                            </p>
-
+                            <div class="menu-icon bg-info-subtle text-info">📜</div>
+                            <h5 class="fw-bold">Riwayat</h5>
+                            <p class="text-muted mb-0">Lihat histori scan dan transaksi reward.</p>
                         </div>
-
                     </a>
-
                 </div>
 
                 <div class="col-md-4">
-
-                    <a href="/user/profil"
-                       class="text-decoration-none text-dark">
-
+                    <a href="/user/profil" class="text-decoration-none text-dark">
                         <div class="menu-card shadow-sm p-4">
-
-                            <div class="menu-icon bg-secondary-subtle text-secondary">
-                                👤
-                            </div>
-
-                            <h5 class="fw-bold">
-                                Profil
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                Kelola data akun dan informasi pengguna.
-                            </p>
-
+                            <div class="menu-icon bg-secondary-subtle text-secondary">👤</div>
+                            <h5 class="fw-bold">Profil</h5>
+                            <p class="text-muted mb-0">Kelola data akun dan informasi pengguna.</p>
                         </div>
-
                     </a>
-
                 </div>
 
                 <div class="col-md-4">
-
-                    <a href="/user/leaderboard"
-                       class="text-decoration-none text-dark">
-
+                    <a href="/user/leaderboard" class="text-decoration-none text-dark">
                         <div class="menu-card shadow-sm p-4">
-
-                            <div class="menu-icon bg-danger-subtle text-danger">
-                                🏆
-                            </div>
-
-                            <h5 class="fw-bold">
-                                Leaderboard
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                Lihat pengguna dengan poin tertinggi.
-                            </p>
-
+                            <div class="menu-icon bg-danger-subtle text-danger">🏆</div>
+                            <h5 class="fw-bold">Leaderboard</h5>
+                            <p class="text-muted mb-0">Lihat pengguna dengan poin tertinggi.</p>
                         </div>
-
                     </a>
-
                 </div>
 
                 <div class="col-md-4">
-
-                    <a href="/user/info"
-                       class="text-decoration-none text-dark">
-
+                    <a href="/user/info" class="text-decoration-none text-dark">
                         <div class="menu-card shadow-sm p-4">
-
-                            <div class="menu-icon bg-primary-subtle text-primary">
-                                ℹ️
-                            </div>
-
-                            <h5 class="fw-bold">
-                                Info & Edukasi
-                            </h5>
-
-                            <p class="text-muted mb-0">
-                                Pelajari manfaat dan jenis sampah.
-                            </p>
-
+                            <div class="menu-icon bg-primary-subtle text-primary">ℹ️</div>
+                            <h5 class="fw-bold">Info & Edukasi</h5>
+                            <p class="text-muted mb-0">Pelajari manfaat dan jenis sampah.</p>
                         </div>
-
                     </a>
-
                 </div>
 
             </div>
@@ -479,7 +201,6 @@
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1050;">
     <div class="dropdown">
         <button class="btn btn-success rounded-circle p-0 d-flex align-items-center justify-content-center shadow-lg position-relative" 
@@ -525,12 +246,21 @@
                     </div>
                     
                     <p class="mb-1 text-secondary" style="line-height: 1.4;">
-                        Permintaan penukaran poin untuk produk <strong class="text-dark" th:text="${trx.detail}">Item Digital</strong> sedang ditinjau.
+                        <span th:if="${#strings.contains(trx.detail, 'Setoran Sampah')}">
+                            Permintaan verifikasi poin untuk <strong class="text-success" th:text="${trx.detail}">Setoran Sampah</strong> sedang ditinjau.
+                        </span>
+                        <span th:unless="${#strings.contains(trx.detail, 'Setoran Sampah')}">
+                            Permintaan penukaran poin untuk produk <strong class="text-dark" th:text="${trx.detail}">Item Digital</strong> sedang ditinjau.
+                        </span>
                     </p>
                     
                     <div class="d-flex justify-content-between align-items-center mt-2 pt-1 border-top border-warning-subtle">
-                        <span class="small text-muted">Biaya Poin:</span>
-                        <span class="badge bg-warning text-dark fw-bold" th:text="${trx.jumlahPoin} + ' Poin'">0 Poin</span>
+                        <span class="small text-muted" 
+                              th:text="${#strings.contains(trx.detail, 'Setoran Sampah') ? 'Poin Didapat:' : 'Biaya Poin:'}">Biaya Poin:</span>
+                        
+                        <span class="badge fw-bold" 
+                              th:classappend="${#strings.contains(trx.detail, 'Setoran Sampah') ? 'bg-success text-white' : 'bg-warning text-dark'}"
+                              th:text="${#strings.contains(trx.detail, 'Setoran Sampah') ? '+ ' + trx.jumlahPoin + ' Poin' : trx.jumlahPoin + ' Poin'}">0 Poin</span>
                     </div>
 
                     <a th:href="@{/riwayat}" class="stretched-link d-block mt-1 text-end text-decoration-none text-warning-emphasis fw-bold" style="font-size: 11px;">
@@ -542,5 +272,7 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

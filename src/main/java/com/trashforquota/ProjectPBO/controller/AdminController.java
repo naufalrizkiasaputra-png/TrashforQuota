@@ -39,7 +39,7 @@ public class AdminController {
     }
 
     // =========================================================================
-    // RUTE BAWAAN: MANAJEMEN KATEGORI SAMPAH
+    // MANAJEMEN KATEGORI SAMPAH
     // =========================================================================
     @GetMapping("/sampah")
     public String kelolaSampah(Model model) {
@@ -75,7 +75,7 @@ public class AdminController {
     }
 
     // =========================================================================
-    // RUTE BAWAAN: DASHBOARD UTAMA & MONITORING
+    // DASHBOARD UTAMA & MONITORING
     // =========================================================================
     @GetMapping("/home")
     public String adminHome(Model model) {
@@ -85,7 +85,11 @@ public class AdminController {
             List<Transaksi> allTransactions = transaksiRepository.findAll();
 
             model.addAttribute("totalUsers", allUsers.size());
-            double totalSampah = allBins.stream().mapToDouble(SmartBin::getTotalSampah).sum();
+            
+            // Proteksi mapToDouble dari nilai null pada totalSampah SmartBin
+            double totalSampah = allBins.stream()
+                    .mapToDouble(SmartBin::getTotalSampah)
+                    .sum();
             model.addAttribute("totalSampah", totalSampah);
             
             // 1. Antrean Reward (Filter transaksi PENDING yang BUKAN SETOR_SAMPAH)
@@ -109,7 +113,7 @@ public class AdminController {
     }
 
     // =========================================================================
-    // RUTE AKSI MANAJEMEN: VERIFIKASI SETOR SAMPAH USER
+    // VERIFIKASI SETOR SAMPAH USER (DENGAN UPDATE SMARTBIN)
     // =========================================================================
     @PostMapping("/scan/setuju/{id}")
     public String setujuiSampahAdmin(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
@@ -118,18 +122,68 @@ public class AdminController {
             if (trx != null && "PENDING".equalsIgnoreCase(trx.getStatus())) {
                 User user = trx.getUser();
                 
-                // Tambahkan poin akumulasi sampah ke dompet user secara permanen
-                user.setPoin(user.getPoin() + (int) trx.getJumlahPoin());
-                userRepository.save(user);
+                // Pengecekan Nilai untuk Jumlah Poin (getJumlahPoin() mengembalikan primitif double)
+                double poinMentah = trx.getJumlahPoin();
+                int poinTambahan = (int) Math.round(poinMentah);
+                
+                if (user != null) {
+                    // user.getPoin() is a primitive int in the model, so it cannot be compared to null
+                    int currentPoin = user.getPoin();
+                    user.setPoin(currentPoin + poinTambahan);
+                    userRepository.save(user);
+                }
 
-                // Tandai transaksi telah selesai diverifikasi
+                SmartBin targetBin = trx.getSmartBin();
+                
+                // LOGIKA FALLBACK KETIKA RELASI SMARTBIN NULL
+                if (targetBin == null && trx.getDetail() != null && trx.getDetail().startsWith("Setoran Sampah ke ")) {
+                    try {
+                        String detailText = trx.getDetail();
+                        String namaLokasi = detailText.replace("Setoran Sampah ke ", ""); 
+                        int openParenIndex = namaLokasi.indexOf(" (");
+                        if (openParenIndex != -1) {
+                            namaLokasi = namaLokasi.substring(0, openParenIndex).trim(); 
+                        }
+                        
+                        String finalNamaLokasi = namaLokasi;
+                        targetBin = smartBinRepository.findAll().stream()
+                                .filter(b -> b.getLokasi() != null && b.getLokasi().trim().equalsIgnoreCase(finalNamaLokasi))
+                                .findFirst()
+                                .orElse(null);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
+                if (targetBin != null) {
+                    double beratTambahanKg = (poinMentah / 5.0) / 1000.0;
+                    Double totalSampahObj = targetBin.getTotalSampah();
+                    double sampahSaatIni = totalSampahObj != null ? totalSampahObj : 0.0;
+                    double totalSampahBaru = sampahSaatIni + beratTambahanKg;
+                    
+                    targetBin.setTotalSampah(totalSampahBaru);
+                    
+                    if (targetBin.getStatus() == null || targetBin.getStatus().trim().isEmpty()) {
+                        targetBin.setStatus("ACTIVE");
+                    }
+                    
+                    Double kapasitasObj = targetBin.getKapasitas();
+                    double kapasitas = kapasitasObj != null ? kapasitasObj : 0.0;
+                    if (kapasitas > 0 && totalSampahBaru >= kapasitas) {
+                        targetBin.setStatus("FULL");
+                    }
+                    
+                    smartBinRepository.save(targetBin);
+                }
+
                 trx.setStatus("DISETUJUI");
                 transaksiRepository.save(trx);
 
-                redirectAttributes.addFlashAttribute("message", "Berhasil menyetujui sampah dan menambahkan poin untuk " + user.getUsername());
+                redirectAttributes.addFlashAttribute("message", "Berhasil menyetujui sampah, kapasitas SmartBin diperbarui!");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Gagal memproses verifikasi: " + e.getMessage());
         }
         return "redirect:/admin/home";
     }
@@ -139,14 +193,13 @@ public class AdminController {
         try {
             Transaksi trx = transaksiRepository.findById(id).orElse(null);
             if (trx != null && "PENDING".equalsIgnoreCase(trx.getStatus())) {
-                // Batalkan pengajuan poin tanpa memodifikasi saldo dompet user
                 trx.setStatus("DITOLAK");
                 transaksiRepository.save(trx);
-
-                redirectAttributes.addFlashAttribute("error", "Pengajuan poin sampah berhasil ditolak.");
+                redirectAttributes.addFlashAttribute("message", "Pengajuan poin sampah berhasil ditolak.");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Gagal menolak: " + e.getMessage());
         }
         return "redirect:/admin/home";
     }
@@ -172,7 +225,7 @@ public class AdminController {
     }
 
     // =========================================================================
-    // RUTE BAWAAN: MANAJEMEN REWARD (KUOTA & PULSA)
+    // MANAJEMEN REWARD (KUOTA & PULSA)
     // =========================================================================
     @GetMapping("/reward")
     public String kelolaReward(Model model) {
@@ -209,7 +262,7 @@ public class AdminController {
             kuota.setJumlahGb(jumlahGb);
             kuota.setMasaAktifHari(masaAktifHari);
             rewardRepository.save(kuota);
-            redirectAttributes.addFlashAttribute("success", "kuotaAdded");
+            redirectAttributes.addFlashAttribute("message", "Kategori Kuota Internet berhasil ditambahkan!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,7 +281,7 @@ public class AdminController {
             pulsa.setProvider("Pulsa Rp " + nominalPulsa);
             pulsa.setNominalPulsa(nominalPulsa);
             rewardRepository.save(pulsa);
-            redirectAttributes.addFlashAttribute("success", "pulsaAdded");
+            redirectAttributes.addFlashAttribute("message", "Kategori Pulsa berhasil ditambahkan!");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -239,7 +292,7 @@ public class AdminController {
     public String deleteReward(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             rewardRepository.deleteById(id);
-            redirectAttributes.addFlashAttribute("success", "kuotaDeleted");
+            redirectAttributes.addFlashAttribute("message", "Kategori Hadiah berhasil dihapus.");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -247,8 +300,48 @@ public class AdminController {
     }
 
     // =========================================================================
-    // RUTE BAWAAN: ANTREAN TRANSAKSI USER
+    // FIX UTAMA: ANTREAN VERIFIKASI TRANSAKSI KUOTA/PULSA DIGITAL DASHBOARD
     // =========================================================================
+    @PostMapping("/approve-transaksi")
+    public String approveTransaksiDashboard(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Transaksi trx = transaksiRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Data transaksi tidak ditemukan."));
+            
+            trx.setStatus("SUCCESS");
+            transaksiRepository.save(trx);
+            
+            redirectAttributes.addFlashAttribute("message", "Sukses menyetujui klaim hadiah! Kuota siap dikirim ke user.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Gagal menyetujui transaksi: " + e.getMessage());
+        }
+        return "redirect:/admin/home";
+    }
+
+    @PostMapping("/tolak-transaksi")
+    public String tolakTransaksiDashboard(@RequestParam("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Transaksi trx = transaksiRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Data transaksi tidak ditemukan."));
+            
+            trx.setStatus("REJECTED");
+            User user = trx.getUser();
+            
+            // Pengembalian poin secara aman dari null pointer check
+            if (user != null && trx.getReward() != null) {
+                int poinKembali = trx.getReward().getPoinDibutuhkan() != null ? trx.getReward().getPoinDibutuhkan() : 0;
+                int currentPoin = user.getPoin();
+                user.setPoin(currentPoin + poinKembali);
+                userRepository.save(user);
+            }
+            transaksiRepository.save(trx);
+            redirectAttributes.addFlashAttribute("message", "Permintaan klaim berhasil ditolak dan poin user dikembalikan.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Gagal menolak transaksi: " + e.getMessage());
+        }
+        return "redirect:/admin/home";
+    }
+
     @GetMapping("/penukaran")
     public String antreanPenukaran(Model model) {
         try {
@@ -261,35 +354,6 @@ public class AdminController {
             e.printStackTrace();
         }
         return "admin/penukaran";
-    }
-
-    @PostMapping("/approve-transaksi")
-    public String approveTransaksiDashboard(@RequestParam Long id) {
-        try {
-            Transaksi trx = transaksiRepository.findById(id).orElseThrow();
-            trx.setStatus("SUCCESS");
-            transaksiRepository.save(trx);
-            return "redirect:/admin/home?success=approved";
-        } catch (Exception e) {
-            return "redirect:/admin/home?error=failedToApprove";
-        }
-    }
-
-    @PostMapping("/tolak-transaksi")
-    public String tolakTransaksiDashboard(@RequestParam Long id) {
-        try {
-            Transaksi trx = transaksiRepository.findById(id).orElseThrow();
-            trx.setStatus("REJECTED");
-            User user = trx.getUser();
-            if (user != null && trx.getReward() != null) {
-                user.setPoin(user.getPoin() + trx.getReward().getPoinDibutuhkan());
-                userRepository.save(user);
-            }
-            transaksiRepository.save(trx);
-            return "redirect:/admin/home?success=rejected";
-        } catch (Exception e) {
-            return "redirect:/admin/home?error=failedToReject";
-        }
     }
 
     @PostMapping("/transaksi/approve")

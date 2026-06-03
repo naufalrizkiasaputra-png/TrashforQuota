@@ -31,17 +31,20 @@ public class UserController {
     private final TransaksiRepository transaksiRepository;
     private final RewardService rewardService;
     private final ItemSampahRepository itemSampahRepository; 
+    private final SmartBinRepository smartBinRepository; 
 
     public UserController(UserRepository userRepository, 
                           RewardRepository rewardRepository, 
                           TransaksiRepository transaksiRepository,
                           RewardService rewardService,
-                          ItemSampahRepository itemSampahRepository) { 
+                          ItemSampahRepository itemSampahRepository,
+                          SmartBinRepository smartBinRepository) { 
         this.userRepository = userRepository;
         this.rewardRepository = rewardRepository;
         this.transaksiRepository = transaksiRepository;
         this.rewardService = rewardService;
         this.itemSampahRepository = itemSampahRepository; 
+        this.smartBinRepository = smartBinRepository; 
     }
 
     // =========================================================================
@@ -58,12 +61,24 @@ public class UserController {
                     .orElseThrow(() -> new RuntimeException("User tidak ditemukan!"));
             model.addAttribute("user", user);
 
-            // Tambahkan list pending ke notifikasi bell halaman scan jika diperlukan
             List<Transaksi> pendingNotifs = transaksiRepository.findAll().stream()
                 .filter(t -> t.getUser() != null && t.getUser().equals(user))
                 .filter(t -> t.getStatus() != null && "PENDING".equalsIgnoreCase(t.getStatus()))
                 .collect(Collectors.toList());
+            
+            long pendingSetorCount = pendingNotifs.stream()
+                .filter(t -> "SETOR_SAMPAH".equalsIgnoreCase(t.getJenisTransaksi()))
+                .count();
+            
+            Transaksi pendingSetorTransaksi = pendingNotifs.stream()
+                .filter(t -> "SETOR_SAMPAH".equalsIgnoreCase(t.getJenisTransaksi()))
+                .reduce((first, second) -> second) 
+                .orElse(null);
+
             model.addAttribute("listTransaksiPending", pendingNotifs);
+            model.addAttribute("pendingSetorCount", pendingSetorCount);
+            model.addAttribute("pendingSetor", pendingSetorTransaksi);
+            model.addAttribute("listSmartBin", smartBinRepository.findAll());
 
             ScanForm scanForm = new ScanForm();
             scanForm.setJenis(new ArrayList<>(List.of(""))); 
@@ -131,13 +146,24 @@ public class UserController {
                     break;
             }
             
-            // Masukkan data notifikasi pendukung update real-time
             List<Transaksi> pendingNotifs = transaksiRepository.findAll().stream()
                 .filter(t -> t.getUser() != null && t.getUser().equals(user))
                 .filter(t -> t.getStatus() != null && "PENDING".equalsIgnoreCase(t.getStatus()))
                 .collect(Collectors.toList());
-            model.addAttribute("listTransaksiPending", pendingNotifs);
+            
+            long pendingSetorCount = pendingNotifs.stream()
+                .filter(t -> "SETOR_SAMPAH".equalsIgnoreCase(t.getJenisTransaksi()))
+                .count();
+            
+            Transaksi pendingSetorTransaksi = pendingNotifs.stream()
+                .filter(t -> "SETOR_SAMPAH".equalsIgnoreCase(t.getJenisTransaksi()))
+                .reduce((first, second) -> second)
+                .orElse(null);
 
+            model.addAttribute("listTransaksiPending", pendingNotifs);
+            model.addAttribute("pendingSetorCount", pendingSetorCount);
+            model.addAttribute("pendingSetor", pendingSetorTransaksi);
+            model.addAttribute("listSmartBin", smartBinRepository.findAll());
             model.addAttribute("scanForm", scanForm);
             model.addAttribute("items", itemSampahRepository.findAll());
         } catch (Exception e) {
@@ -146,10 +172,10 @@ public class UserController {
         return "scan";
     }
 
-    // ENDPOINT BARU: Memproses pengiriman ajuan poin sampah ke database dengan status PENDING
     @PostMapping("/scan/kirim")
     public String kirimPengajuanSampah(@AuthenticationPrincipal UserDetails userDetails,
                                        @RequestParam("totalPoin") double totalPoin,
+                                       @RequestParam(value = "smartBinId", required = false) Long smartBinId, 
                                        RedirectAttributes redirectAttributes) {
         if (userDetails == null) {
             return "redirect:/login";
@@ -158,13 +184,22 @@ public class UserController {
             User user = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow(() -> new RuntimeException("User tidak ditemukan!"));
 
-            // Membuat record Transaksi baru menggunakan model Transaksi yang disesuaikan
             Transaksi trxSampah = new Transaksi();
             trxSampah.setUser(user);
             trxSampah.setJumlahPoin(totalPoin);
             trxSampah.setStatus("PENDING");
             trxSampah.setJenisTransaksi("SETOR_SAMPAH");
-            trxSampah.setDetail("Permintaan verifikasi setor sampah sebesar " + totalPoin + " Poin");
+            
+            if (smartBinId != null) {
+                SmartBin smartBin = smartBinRepository.findById(smartBinId).orElse(null);
+                if (smartBin != null) {
+                    trxSampah.setDetail("Setoran Sampah ke " + smartBin.getLokasi() + " (" + totalPoin + " Pts)");
+                } else {
+                    trxSampah.setDetail("Setoran Sampah " + totalPoin + " Pts");
+                }
+            } else {
+                trxSampah.setDetail("Setoran Sampah " + totalPoin + " Pts");
+            }
 
             transaksiRepository.save(trxSampah);
 
@@ -176,7 +211,7 @@ public class UserController {
     }
 
     // =========================================================================
-    // RUTE BAWAAN: DASHBOARD UTAMA USER & LAINNYA
+    // RUTE DASHBOARD UTAMA USER & LAINNYA
     // =========================================================================
     @GetMapping("/home")
     public String home(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -188,14 +223,12 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan!"));
         model.addAttribute("user", user);
         
-        // Mengambil data transaksi berstatus PENDING/Update untuk disalurkan ke Floating Bell
         List<Transaksi> allTransactions = transaksiRepository.findAll();
         List<Transaksi> pendingNotifs = allTransactions.stream()
             .filter(t -> t.getUser() != null && t.getUser().equals(user))
             .filter(t -> t.getStatus() != null && "PENDING".equalsIgnoreCase(t.getStatus()))
             .collect(Collectors.toList());
         
-        // Menggunakan nama attribute tunggal 'listTransaksiPending' agar singkron dengan template HTML baru
         model.addAttribute("listTransaksiPending", pendingNotifs);
         
         try {
@@ -208,6 +241,9 @@ public class UserController {
         return "home"; 
     }
 
+    // =========================================================================
+    // 🛠️ PERBAIKAN UTAMA: Manajemen Pengambilan Data Transaksi Riwayat User
+    // =========================================================================
     @GetMapping("/tukar-poin")
     public String tukarPoinPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         if (userDetails == null) {
@@ -218,15 +254,15 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User tidak ditemukan!"));
         model.addAttribute("user", user);
 
-        List<Transaksi> allTransactionsForUser = transaksiRepository.findAll();
-        List<Transaksi> userTransactions = allTransactionsForUser.stream()
-            .filter(t -> t.getUser() != null && t.getUser().equals(user))
+        // Perbaikan filter agar hanya mengambil riwayat jenis "TUKAR_REWARD" milik user aktif saat ini
+        List<Transaksi> userTransactions = transaksiRepository.findAll().stream()
+            .filter(t -> t.getUser() != null && t.getUser().getId().equals(user.getId()))
+            .filter(t -> "TUKAR_REWARD".equalsIgnoreCase(t.getJenisTransaksi()))
             .collect(Collectors.toList());
         model.addAttribute("userTransactions", userTransactions);
 
-        // Tambahkan juga list transaksi pending di halaman tukar agar Bell Notifikasi di pojok kanan bawah tetap aktif di sini
-        List<Transaksi> pendingNotifs = allTransactionsForUser.stream()
-            .filter(t -> t.getUser() != null && t.getUser().equals(user))
+        List<Transaksi> pendingNotifs = transaksiRepository.findAll().stream()
+            .filter(t -> t.getUser() != null && t.getUser().getId().equals(user.getId()))
             .filter(t -> t.getStatus() != null && "PENDING".equalsIgnoreCase(t.getStatus()))
             .collect(Collectors.toList());
         model.addAttribute("listTransaksiPending", pendingNotifs);
@@ -248,7 +284,6 @@ public class UserController {
     @PostMapping("/tukar/proses")
     public String prosesTukarPoin(@AuthenticationPrincipal UserDetails userDetails,
                                   @RequestParam("idReward") Long idReward,
-                                  @RequestParam("noHp") String noHp,
                                   RedirectAttributes redirectAttributes) {
         if (userDetails == null) {
             return "redirect:/login";
@@ -275,6 +310,7 @@ public class UserController {
             transaksiBaru.setStatus("PENDING"); 
             transaksiBaru.setJenisTransaksi("TUKAR_REWARD");
             transaksiBaru.setDetail(reward.getNamaReward());
+            transaksiBaru.setJumlahPoin((double) reward.getPoinDibutuhkan());
 
             transaksiRepository.save(transaksiBaru);
 
@@ -455,8 +491,13 @@ public class UserController {
     }
 
     public static class ScanForm {
+        private Long smartBinId; 
         private List<String> jenis;
+        private List<Integer> broadband; 
         private List<Integer> berat;
+
+        public Long getSmartBinId() { return smartBinId; }
+        public void setSmartBinId(Long smartBinId) { this.smartBinId = smartBinId; }
 
         public List<String> getJenis() { return jenis; }
         public void setJenis(List<String> jenis) { this.jenis = jenis; }

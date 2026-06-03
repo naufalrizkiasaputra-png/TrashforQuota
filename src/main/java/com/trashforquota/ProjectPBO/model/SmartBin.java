@@ -10,7 +10,7 @@ public class SmartBin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_bin")
-    private Long idBin;
+    private Long idBin; // Menggunakan idBin, bukan id biasa
 
     private String lokasi;
     private double kapasitas;
@@ -18,7 +18,5 @@ public class SmartBin {
     @Column(name = "total_sampah")
     private double totalSampah;
 
-    // TAMBAHKAN FIELD INI
     private String status = "ACTIVE"; 
 }
-

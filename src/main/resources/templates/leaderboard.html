@@ -4,14 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard - TrashforQuota</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    </style>
+    
+    <!-- Menghubungkan ke file CSS Global di static/css/style.css -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body class="bg-slate-50 font-sans min-h-screen selection:bg-green-500 selection:text-white">
+<body class="bg-slate-50 font-sans min-h-screen selection:bg-green-500 selection:text-white" style="font-family: 'Plus Jakarta Sans', sans-serif;">
 
     <nav class="bg-gradient-to-r from-green-600 to-emerald-700 p-4 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
@@ -35,6 +39,7 @@
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
             
+            <!-- 2nd Place -->
             <div th:each="leader, iterStat : ${leaders}" th:if="${iterStat.count == 2}" 
                  class="bg-gradient-to-b from-slate-50 to-white border-2 border-slate-300 rounded-2xl p-6 shadow-sm flex flex-col items-center order-2 md:order-1 relative md:h-[230px] justify-center transition-all hover:-translate-y-1.5 hover:shadow-md duration-300 group">
                 <div class="absolute -top-3.5 bg-slate-400 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-xs border border-white">
@@ -57,6 +62,7 @@
                 <p class="text-xs font-black text-slate-400 uppercase tracking-tighter" th:text="${leader.poin} + ' XP'">0 XP</p>
             </div>
 
+            <!-- 1st Place -->
             <div th:each="leader, iterStat : ${leaders}" th:if="${iterStat.count == 1}" 
                  class="bg-gradient-to-b from-amber-50/40 to-white border-2 border-amber-400 rounded-2xl p-6 shadow-md flex flex-col items-center order-1 md:order-2 relative md:h-[265px] justify-center transition-all hover:-translate-y-1.5 hover:shadow-lg duration-300 group">
                 <div class="absolute -top-4 text-amber-500 drop-shadow-xs text-xl animate-bounce" style="animation-duration: 4s;">
@@ -79,6 +85,7 @@
                 <p class="text-sm font-black text-amber-600 uppercase tracking-tight" th:text="${leader.poin} + ' XP'">0 XP</p>
             </div>
 
+            <!-- 3rd Place -->
             <div th:each="leader, iterStat : ${leaders}" th:if="${iterStat.count == 3}" 
                  class="bg-gradient-to-b from-orange-50/20 to-white border-2 border-orange-400/70 rounded-2xl p-6 shadow-sm flex flex-col items-center order-3 md:order-3 relative md:h-[230px] justify-center transition-all hover:-translate-y-1.5 hover:shadow-md duration-300 group">
                 <div class="absolute -top-3.5 bg-orange-600/80 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-xs border border-white">
@@ -103,6 +110,7 @@
 
         </div>
 
+        <!-- Leaderboard Table -->
         <div class="bg-white rounded-2xl border border-slate-200/60 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">

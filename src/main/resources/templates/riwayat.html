@@ -2,139 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat - TrashID</title>
 
+    <!-- Bootstrap & Icons CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-    <style>
-        body{
-            background: linear-gradient(to bottom, #eefaf3, #f4f7fb);
-            min-height: 100vh;
-        }
-
-        .hero-box{
-            background: linear-gradient(135deg,#198754,#20c997);
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            color: white;
-        }
-
-        .hero-circle{
-            width: 230px;
-            height: 230px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 50%;
-            position: absolute;
-            top: -70px;
-            right: -60px;
-        }
-
-        .hero-circle2{
-            width: 160px;
-            height: 160px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
-            position: absolute;
-            bottom: -40px;
-            left: -40px;
-        }
-
-        .section-title{
-            font-weight: 800;
-            color: #198754;
-        }
-
-        .history-card{
-            border-radius: 24px;
-            overflow: hidden;
-        }
-
-        .table{
-            margin-bottom: 0;
-        }
-
-        .table thead{
-            background: #f1fff7;
-        }
-
-        .table thead th{
-            color: #198754;
-            font-weight: 700;
-            border: none;
-            padding: 18px;
-        }
-
-        .table tbody td{
-            padding: 18px;
-            vertical-align: middle;
-            border-color: #f1f1f1;
-        }
-
-        .table tbody tr{
-            transition: .2s;
-        }
-
-        .table tbody tr:hover{
-            background: #f8fffb;
-        }
-
-        .badge-status{
-            padding: 8px 14px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 700;
-            display: inline-block;
-        }
-
-        .status-success{
-            background: #e9fff3;
-            color: #198754;
-        }
-
-        .status-process{
-            background: #fff8e6;
-            color: #d39e00;
-        }
-
-        .status-failed{
-            background: #ffecec;
-            color: #dc3545;
-        }
-
-        .back-btn{
-            border-radius: 14px;
-            padding: 10px 18px;
-        }
-
-        .info-box{
-            border-radius: 22px;
-            transition: .2s;
-        }
-
-        .info-box:hover{
-            transform: translateY(-3px);
-        }
-
-        .mini-icon{
-            width: 65px;
-            height: 65px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-    </style>
+    <!-- Menghubungkan ke file CSS Global di static/css/style.css -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
 <div class="container py-4">
 
-    <a href="/user/home" class="btn btn-light shadow-sm mb-3 back-btn">
-        <i class="bi bi-arrow-left"></i> Kembali
+    <a th:href="@{/user/home}" class="btn btn-light shadow-sm mb-3 nav-btn fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Kembali
     </a>
 
     <div class="hero-box shadow-lg p-4 mb-4">
@@ -151,16 +35,16 @@
                 </div>
             </div>
             <div class="col-md-4 text-center d-none d-md-block">
-                <i class="bi bi-clock-history" style="font-size:120px;opacity:.9;"></i>
+                <i class="bi bi-clock-history text-white" style="font-size:120px; opacity:.8;"></i>
             </div>
         </div>
     </div>
 
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="bg-white shadow-sm p-3 info-box">
+            <div class="bg-white shadow-sm p-3 info-card">
                 <div class="d-flex align-items-center">
-                    <div class="mini-icon bg-success-subtle text-success me-3">♻️</div>
+                    <div class="menu-icon bg-success-subtle text-success me-3 mb-0">♻️</div>
                     <div>
                         <small class="text-muted">Aktivitas</small>
                         <h5 class="fw-bold mb-0">Scan & Reward</h5>
@@ -169,9 +53,9 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="bg-white shadow-sm p-3 info-box">
+            <div class="bg-white shadow-sm p-3 info-card">
                 <div class="d-flex align-items-center">
-                    <div class="mini-icon bg-warning-subtle text-warning me-3">⚡</div>
+                    <div class="menu-icon bg-warning-subtle text-warning me-3 mb-0">⚡</div>
                     <div>
                         <small class="text-muted">Status</small>
                         <h5 class="fw-bold mb-0">Realtime Update</h5>
@@ -180,9 +64,9 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="bg-white shadow-sm p-3 info-box">
+            <div class="bg-white shadow-sm p-3 info-card">
                 <div class="d-flex align-items-center">
-                    <div class="mini-icon bg-info-subtle text-info me-3">📈</div>
+                    <div class="menu-icon bg-info-subtle text-info me-3 mb-0">📈</div>
                     <div>
                         <small class="text-muted">Sistem</small>
                         <h5 class="fw-bold mb-0">Smart Tracking</h5>
@@ -192,7 +76,7 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-lg history-card">
+    <div class="card border-0 shadow-lg" style="border-radius: 24px;">
         <div class="card-body p-4">
             <div class="mb-4">
                 <h4 class="section-title mb-1">Data Riwayat</h4>
@@ -201,25 +85,25 @@
 
             <div class="table-responsive">
                 <table class="table align-middle">
-                    <thead>
+                    <thead style="background: #f1fff7;">
                         <tr>
-                            <th>Jenis</th>
-                            <th>Detail</th>
-                            <th>Poin</th>
-                            <th>Status</th>
-                            <th>Tanggal</th>
+                            <th class="border-0 p-3 text-success fw-bold">Jenis</th>
+                            <th class="border-0 p-3 text-success fw-bold">Detail</th>
+                            <th class="border-0 p-3 text-success fw-bold">Poin</th>
+                            <th class="border-0 p-3 text-success fw-bold">Status</th>
+                            <th class="border-0 p-3 text-success fw-bold">Tanggal</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="t : ${transaksis}">
-                            <td class="fw-semibold text-dark" 
+                    <tbody id="tabelRiwayatBody">
+                        <tr th:each="t : ${transaksis}" style="transition: .2s;">
+                            <td class="fw-semibold text-dark p-3" 
                                 th:text="${#strings.replace(t.jenisTransaksi, '_', ' ')}">
                                 SETOR SAMPAH
                             </td>
 
-                            <td th:text="${t.detail}"></td>
+                            <td class="p-3" th:text="${t.detail}"></td>
 
-                            <td>
+                            <td class="p-3">
                                 <span th:if="${t.jenisTransaksi == 'SETOR_SAMPAH'}" class="fw-bold text-success">
                                     +<span th:text="${t.jumlahPoin}">0</span>
                                 </span>
@@ -228,16 +112,16 @@
                                 </span>
                             </td>
 
-                            <td>
-                                <span th:class="'badge-status ' + 
-                                             (${t.status == 'SUCCESS' || t.status == 'SUKSES'} ? 'status-success' : 
-                                             (${t.status == 'PENDING'} ? 'status-process' : 'status-failed'))"
+                            <td class="p-3">
+                                <span class="badge px-3 py-2 rounded-pill fw-bold"
+                                      th:classappend="${t.status == 'SUCCESS' || t.status == 'SUKSES' ? 'bg-success-subtle text-success' : 
+                                                       (t.status == 'PENDING' ? 'bg-warning-subtle text-warning-emphasis' : 'bg-danger-subtle text-danger')}"
                                       th:text="${t.status}">
                                     SUCCESS
                                 </span>
                             </td>
 
-                            <td class="text-muted small" th:text="${t.tanggal}">
+                            <td class="text-muted small p-3" th:text="${t.tanggal}">
                                 2026-05-20 19:31:13
                             </td>
                         </tr>
@@ -253,6 +137,30 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function updateRiwayatRealtime() {
+        const targetBody = document.getElementById('tabelRiwayatBody');
+        
+        fetch(window.location.href)
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const docBaru = parser.parseFromString(html, 'text/html');
+                const bodyBaru = docBaru.getElementById('tabelRiwayatBody');
+
+                if (bodyBaru && targetBody) {
+                    targetBody.innerHTML = bodyBaru.innerHTML;
+                }
+            })
+            .catch(error => console.warn('Gagal memproses pembaruan riwayat otomatis:', error));
+    }
+
+    // Interval eksekusi otomatis diatur setiap 5000ms (5 detik)
+    setInterval(updateRiwayatRealtime, 5000);
+</script>
 
 </body>
 </html>

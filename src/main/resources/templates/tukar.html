@@ -2,135 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tukar Poin - TrashID</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
-    <style>
-        body{
-            background: linear-gradient(to bottom, #eefaf3, #f7f9fc);
-            min-height: 100vh;
-        }
-
-        .hero-box{
-            background: linear-gradient(135deg,#198754,#20c997);
-            border-radius: 30px;
-            color: white;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .hero-circle{
-            width: 250px;
-            height: 250px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 50%;
-            position: absolute;
-            top: -80px;
-            right: -70px;
-        }
-
-        .hero-circle2{
-            width: 170px;
-            height: 170px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 50%;
-            position: absolute;
-            bottom: -50px;
-            left: -40px;
-        }
-
-        .produk-card{
-            border-radius: 22px;
-            padding: 20px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: .2s;
-            background: white;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .produk-card:hover{
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
-        }
-
-        .produk-card.active{
-            background: linear-gradient(135deg,#198754,#20c997);
-            color: white;
-            transform: scale(1.03);
-            border-color: #198754;
-        }
-
-        .produk-card.active .harga{
-            color: #fff !important;
-        }
-
-        .produk-card.active .masa, .produk-card.active .text-muted{
-            color: rgba(255,255,255,0.8) !important;
-        }
-
-        .kategori-btn{
-            border-radius: 14px !important;
-            padding: 14px;
-            font-weight: 700;
-        }
-
-        .info-box{
-            border-radius: 22px;
-        }
-
-        .phone-input{
-            border-radius: 16px;
-            padding: 14px;
-            background-color: #e9ecef !important; /* Penanda tidak dapat diubah oleh user */
-            font-weight: 600;
-        }
-
-        .section-title{
-            font-weight: 800;
-            color: #198754;
-        }
-
-        .point-badge{
-            background: #e9fff3;
-            color: #198754;
-            border-radius: 30px;
-            padding: 6px 14px;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .scrollable-history {
-            max-height: 290px;
-            overflow-y: auto;
-        }
-        .scrollable-history::-webkit-scrollbar {
-            width: 6px;
-        }
-        .scrollable-history::-webkit-scrollbar-thumb {
-            background-color: #ced4da;
-            border-radius: 10px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
 <div class="container py-4">
 
-    <a th:href="@{/user/home}" class="btn btn-light shadow-sm px-4 mb-3">
-        <i class="bi bi-arrow-left"></i> Kembali
+    <a th:href="@{/user/home}" class="btn btn-light shadow-sm px-4 mb-3 nav-btn fw-semibold">
+        <i class="bi bi-arrow-left me-1"></i> Kembali
     </a>
 
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-3" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
     <div th:if="${error}" class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm mb-3" role="alert">
         <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${error}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -150,16 +39,16 @@
                 </div>
             </div>
             <div class="col-md-4 text-center d-none d-md-block">
-                <i class="bi bi-gift-fill" style="font-size:120px;opacity:.9;"></i>
+                <i class="bi bi-gift-fill text-white" style="font-size:120px; opacity:.9;"></i>
             </div>
         </div>
     </div>
 
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="bg-white shadow-sm p-3 info-box">
+            <div class="bg-white shadow-sm p-3 info-card">
                 <div class="d-flex align-items-center">
-                    <div class="me-3 fs-1">📶</div>
+                    <div class="menu-icon bg-success-subtle text-success me-3 mb-0">📶</div>
                     <div>
                         <small class="text-muted">Produk</small>
                         <h5 class="fw-bold mb-0">Kuota & Pulsa</h5>
@@ -168,9 +57,9 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="bg-white shadow-sm p-3 info-box">
+            <div class="bg-white shadow-sm p-3 info-card">
                 <div class="d-flex align-items-center">
-                    <div class="me-3 fs-1">🎯</div>
+                    <div class="menu-icon bg-warning-subtle text-warning me-3 mb-0">🎯</div>
                     <div>
                         <small class="text-muted">Pilihan</small>
                         <h5 class="fw-bold mb-0">Banyak Reward</h5>
@@ -179,9 +68,9 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="bg-white shadow-sm p-3 info-box">
+            <div class="bg-white shadow-sm p-3 info-card">
                 <div class="d-flex align-items-center">
-                    <div class="me-3 fs-1">💰</div>
+                    <div class="menu-icon bg-info-subtle text-info me-3 mb-0">💰</div>
                     <div>
                         <small class="text-muted">Penukaran</small>
                         <h5 class="fw-bold mb-0">Realtime</h5>
@@ -191,7 +80,7 @@
         </div>
     </div>
 
-    <div class="card border-0 shadow-lg mb-4">
+    <div class="card border-0 shadow-lg mb-4" style="border-radius: 24px;">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
@@ -204,16 +93,16 @@
             </div>
 
             <div class="mb-4">
-                <label class="fw-bold mb-2">Nomor HP Penerima (Otomatis Akun Anda)</label>
+                <label class="fw-bold mb-2 text-dark">Nomor HP Penerima (Otomatis Akun Anda)</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-light"><i class="bi bi-phone"></i></span>
+                    <span class="input-group-text bg-light border-end-0 style-phone-prefix" style="border-top-left-radius: 16px; border-bottom-left-radius: 16px;"><i class="bi bi-phone"></i></span>
                     <input type="text" id="nohp" class="form-control phone-input" 
                            th:value="${user.noHp ?: user.no_hp ?: user.telepon}" readonly>
                 </div>
             </div>
 
             <div class="d-flex justify-content-center mb-4">
-                <div class="btn-group w-100 shadow-sm">
+                <div class="btn-group w-100 shadow-sm" style="border-radius: 14px; overflow: hidden;">
                     <button type="button" class="btn btn-success kategori-btn" onclick="setJenis('kuota')" id="btnKuota">📶 Kuota</button>
                     <button type="button" class="btn btn-outline-success kategori-btn" onclick="setJenis('pulsa')" id="btnPulsa">⚡ Pulsa</button>
                 </div>
@@ -222,103 +111,52 @@
             <div class="row g-4" id="produkContainer"></div>
 
             <div class="mt-5">
-                <button type="button" class="btn btn-success btn-lg w-100 py-3 fw-bold shadow-sm" onclick="konfirmasi()">
+                <button type="button" class="btn btn-success btn-lg w-100 py-3 fw-bold shadow-sm btn-submit-action" onclick="konfirmasi()">
                     <i class="bi bi-check-circle me-2"></i> Lanjutkan Penukaran
                 </button>
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-lg animate__animated animate__fadeInUp">
-        <div class="card-header bg-white border-0 pt-4 px-4">
-            <h5 class="fw-bold text-success mb-1"><i class="bi bi-clock-history me-2"></i> Status Penukaran Poin Kamu</h5>
-            <small class="text-muted">Pantau log persetujuan klaim hadiah pulsa/kuota secara real-time dari admin.</small>
-        </div>
-        <div class="card-body px-4 pb-4">
-            <div class="table-responsive scrollable-history">
-                <table class="table align-middle table-hover mb-0">
-                    <thead class="table-light sticky-top" style="z-index: 1;">
-                        <tr>
-                            <th>Item Reward</th>
-                            <th class="text-center">Status</th>
-                            <th>Kode Voucher / SN</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:if="${userTransactions == null || userTransactions.isEmpty()}">
-                            <td colspan="3" class="text-center text-muted py-4">
-                                <i class="bi bi-gift-fill fs-3 text-secondary d-block mb-2"></i>
-                                Belum ada riwayat penukaran poin.
-                            </td>
-                        </tr>
-                        <tr th:each="tx : ${userTransactions}">
-                            <td>
-                                <div class="fw-bold text-dark" th:text="${tx.reward != null ? tx.reward.namaReward : 'Reward'}">Kuota Telkomsel 10GB</div>
-                                <small class="text-danger fw-semibold" th:text="${tx.reward != null ? '-' + tx.reward.poinDibutuhkan + ' Poin' : '-0 Pts'}">-100 Pts</small>
-                            </td>
-                            <td class="text-center">
-                                <span th:if="${tx.status == 'PENDING'}" class="badge bg-warning text-dark px-3 py-2 rounded-pill">
-                                    <i class="bi bi-hourglass-split me-1"></i> Pending
-                                </span>
-                                <span th:if="${tx.status == 'SUCCESS'}" class="badge bg-success text-white px-3 py-2 rounded-pill">
-                                    <i class="bi bi-check-circle-fill me-1"></i> Disetujui
-                                </span>
-                                <span th:if="${tx.status == 'REJECTED'}" class="badge bg-danger text-white px-3 py-2 rounded-pill">
-                                    <i class="bi bi-x-circle-fill me-1"></i> Ditolak
-                                </span>
-                            </td>
-                            <td>
-                                <div th:if="${tx.status == 'SUCCESS'}" class="font-monospace text-success fw-bold small">
-                                    <i class="bi bi-ticket-perforated me-1"></i> <span th:text="${tx.serialNumber}">SN-123456</span>
-                                </div>
-                                <div th:if="${tx.status == 'PENDING'}" class="text-muted small italic">
-                                    Menunggu proses admin...
-                                </div>
-                                <div th:if="${tx.status == 'REJECTED'}" class="text-danger small">
-                                    Poin dikembalikan utuh.
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
 </div>
 
-<button id="btnTriggerModal" type="button" class="d-none" data-bs-toggle="modal" data-bs-target="#modalKonfirmasi"></button>
-
 <div class="modal fade" id="modalKonfirmasi" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius:24px;">
-            <div class="modal-body p-4">
-                <div class="text-center mb-4">
-                    <div style="font-size:70px;">🎉</div>
-                    <h4 class="fw-bold">Konfirmasi Reward</h4>
-                    <p class="text-muted">Pastikan data penukaran sudah benar</p>
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius:26px;">
+            <div class="modal-body text-center p-4">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center bg-success-subtle text-success rounded-circle" 
+                     style="width: 75px; height: 75px; font-size: 34px;">
+                    🎁
+                </div>
+                <h4 class="fw-bold text-dark mb-1">Konfirmasi Penukaran</h4>
+                <small class="text-muted d-block mb-3">Pastikan data klaim reward sudah benar</small>
+
+                <div class="p-3 mb-2 bg-light rounded-4 text-start border border-light-subtle">
+                    <small class="text-muted d-block small mb-1"><i class="bi bi-telephone-fill me-1 text-success"></i> Nomor HP Tujuan</small>
+                    <h6 class="fw-bold text-dark mb-0" id="confNoHp"></h6>
                 </div>
 
-                <div class="bg-light rounded-4 p-3 mb-3">
-                    <small class="text-muted d-block mb-1"><i class="bi bi-telephone-fill me-1 text-success"></i> Nomor HP Tujuan</small>
-                    <h5 class="fw-bold mb-0" id="confNoHp"></h5>
+                <div class="p-3 mb-4 bg-light rounded-4 text-start border border-success-subtle">
+                    <small class="text-muted d-block small mb-1"><i class="bi bi-gift-fill me-1 text-success"></i> Reward Yang Dipilih</small>
+                    <h6 class="fw-bold text-success mb-0" id="confProduk"></h6>
                 </div>
 
-                <div class="bg-light rounded-4 p-3 mb-4">
-                    <small class="text-muted d-block mb-1"><i class="bi bi-gift-fill me-1 text-success"></i> Reward Dipilih</small>
-                    <h5 class="fw-bold mb-0" id="confProduk"></h5>
-                </div>
+                <p class="text-muted small mb-4 px-1" style="line-height: 1.5;">
+                    Klik tombol di bawah untuk mengirim data permintaan ke Admin.
+                </p>
 
-                <form method="post" th:action="@{/tukar}">
+                <form method="post" th:action="@{/user/tukar/proses}">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    
-                    <input type="hidden" name="nohp" id="inputNoHp">
-                    <input type="hidden" name="rewardId" id="inputRewardId">
-                    <input type="hidden" name="jenisReward" id="inputJenisReward">
+                    <input type="hidden" name="idReward" id="inputRewardId">
 
-                    <button type="submit" class="btn btn-success w-100 py-3 fw-bold rounded-3 shadow-sm">
-                        <i class="bi bi-lightning-charge-fill me-1"></i> Tukar Sekarang
-                    </button>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary py-2.5 fw-bold shadow" style="border-radius: 14px; background-color: #0d6efd; border: none;">
+                            <i class="bi bi-send-fill me-1"></i> Kirim ke Admin
+                        </button>
+                        <button type="button" class="btn btn-light py-2.5 fw-semibold text-secondary border-0" data-bs-dismiss="modal" style="border-radius: 14px;">
+                            Batal
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -336,7 +174,6 @@
     };
     /*]]>*/
 
-    // Proses Data Parsing dan Sinkronisasi ID Reward dari database Admin
     const data = {
         kuota: (dataFromDatabase.kuota || []).map(item => {
             let targetId = "";
@@ -370,6 +207,7 @@
 
     let selectedRewardId = "";
     let selectedDisplayNama = "";
+    let selectedPoinText = "";
     let currentJenis = "kuota";
 
     function renderProduk(jenis){
@@ -392,22 +230,22 @@
             card.className = "produk-card shadow-sm";
 
             card.innerHTML = `
-                <div class="mb-3 fs-1">
+                <div class="mb-3 fs-1 text-icon-display">
                     ${jenis === 'kuota' ? '📶' : '⚡'}
                 </div>
-                <h5 class="fw-bold mb-1 title-target">${item.nama}</h5>
+                <h5 class="fw-bold mb-1 title-target text-dark">${item.nama}</h5>
                 <div class="text-muted small mb-1 text-truncate">${item.provider}</div>
                 <div class="masa text-muted mb-3 small">${item.masa}</div>
                 <div class="harga fw-bold text-success">${item.poin} Poin</div>
             `;
 
-            // Fix Handler: Mengisi ID Master Reward yang Valid saat Klik Paket 
             card.onclick = () => {
                 document.querySelectorAll(".produk-card").forEach(c => c.classList.remove("active"));
                 card.classList.add("active");
 
                 selectedRewardId = item.id;
-                selectedDisplayNama = `${item.provider} (${item.nama})`;
+                selectedDisplayNama = `${item.provider} ${item.nama}`;
+                selectedPoinText = `-${item.poin} Poin`;
             };
 
             col.appendChild(card);
@@ -424,72 +262,54 @@
         
         selectedRewardId = "";
         selectedDisplayNama = "";
+        selectedPoinText = "";
         renderProduk(jenis);
     }
 
-function konfirmasi(){
-    const nohp = document.getElementById("nohp").value;
-    const hasSwal = (typeof Swal !== 'undefined');
-
-    if(!nohp || nohp.trim() === "" || nohp === "null"){
-        if(hasSwal){
+    function konfirmasi(){
+        const nohp = document.getElementById("nohp").value;
+        if(!nohp || nohp.trim() === "" || nohp === "null"){
             Swal.fire({ icon: 'error', title: 'Profil Belum Lengkap', text: 'Nomor HP tidak ditemukan.', confirmButtonColor: '#dc3545' });
-        } else {
-            alert("Nomor HP Anda tidak terdeteksi.");
+            return;
         }
-        return;
-    }
-
-    if(!selectedRewardId || selectedRewardId === ""){
-        if(hasSwal){
+        if(!selectedRewardId || selectedRewardId === ""){
             Swal.fire({ icon: 'warning', title: 'Pilih Paket Reward', text: 'Silakan klik salah satu paket di atas!', confirmButtonColor: '#198754' });
-        } else {
-            alert("Silakan pilih salah satu paket terlebih dahulu!");
+            return;
         }
-        return;
+
+        document.getElementById("confNoHp").innerText = nohp;
+        document.getElementById("confProduk").innerText = selectedDisplayNama + " (" + selectedPoinText + ")";
+        document.getElementById("inputRewardId").value = selectedRewardId;
+
+        try {
+            var modalEl = document.getElementById('modalKonfirmasi');
+            var myModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            myModal.show();
+        } catch (e) {
+            console.error("Gagal memicu modal Bootstrap secara manual.");
+        }
     }
 
-    document.getElementById("confNoHp").innerText = nohp;
-    document.getElementById("confProduk").innerText = selectedDisplayNama;
-
-    // Isikan data ke input Form Hidden (Gunakan huruf kecil semua sesuai name baru)
-    document.getElementById("inputNoHp").value = nohp;
-    document.getElementById("inputRewardId").value = selectedRewardId;
-    document.getElementById("inputJenisReward").value = currentJenis.toUpperCase(); // Ubah ke "KUOTA" atau "PULSA"
-
-    try {
-        var modalEl = document.getElementById('modalKonfirmasi');
-        var myModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-        myModal.show();
-    } catch (e) {
-        document.getElementById("btnTriggerModal").click();
-    }
-}
-
-    // Inisialisasi awal render kategori kuota
     renderProduk("kuota");
 </script>
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    let successMessage = /*[[${message}]]*/ null; 
+    let successMessage = /*[[${success} ?: ${message}]]*/ null; 
     let errorMessage = /*[[${error}]]*/ null;
-    const hasSwalObj = (typeof Swal !== 'undefined');
 
     if(successMessage){
-        if(hasSwalObj) {
-            Swal.fire({ title: '🎉 Berhasil!', text: successMessage, icon: 'success', confirmButtonColor: '#198754', confirmButtonText: 'Oke' });
-        } else {
-            alert("🎉 Berhasil!\n" + successMessage);
-        }
+        Swal.fire({
+            title: '🎉 Sukses Dikirim!',
+            text: successMessage,
+            icon: 'success',
+            confirmButtonColor: '#198754',
+            confirmButtonText: 'Selesai'
+        });
     }
 
     if(errorMessage){
-        if(hasSwalObj) {
-            Swal.fire({ title: 'Gagal Menukar 😢', text: errorMessage, icon: 'error', confirmButtonColor: '#dc3545' });
-        } else {
-            alert("Gagal Menukar 😢\n" + errorMessage);
-        }
+        Swal.fire({ title: 'Gagal Menukar 😢', text: errorMessage, icon: 'error', confirmButtonColor: '#dc3545' });
     }
     /*]]>*/
 </script>

@@ -35,6 +35,11 @@ public class Transaksi {
     @JoinColumn(name = "reward_id", nullable = true)
     private Reward reward;
 
+    // TAMBAHAN BARU: Relasi opsional ke SmartBin (bernilai null jika jenisTransaksi adalah "TUKAR_REWARD")
+    @ManyToOne
+    @JoinColumn(name = "id_bin", nullable = true)
+    private SmartBin smartBin;
+
     // --- CONSTRUCTOR ---
     public Transaksi() {
         this.tanggal = LocalDateTime.now(); // Set waktu otomatis saat objek dibuat
@@ -103,5 +108,14 @@ public class Transaksi {
 
     public void setReward(Reward reward) {
         this.reward = reward;
+    }
+
+    // TAMBAHAN BARU: Getter dan Setter untuk SmartBin
+    public SmartBin getSmartBin() {
+        return smartBin;
+    }
+
+    public void setSmartBin(SmartBin smartBin) {
+        this.smartBin = smartBin;
     }
 }
