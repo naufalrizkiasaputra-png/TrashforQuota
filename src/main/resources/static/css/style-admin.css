@@ -1,0 +1,67 @@
+/* style-admin.css - Stylesheet Panel Kontrol Admin TrashForQuota */
+
+body { 
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f9f6; 
+}
+
+/* Komponen Navigasi Sidebar */
+.sidebar { 
+    height: 100vh; 
+    width: 260px; 
+    position: fixed; 
+    background: #198754; 
+    padding-top: 20px; 
+    z-index: 100; 
+}
+
+.sidebar .brand-area {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    padding: 10px 20px 20px 20px;
+    border-bottom: 1px solid rgba(25, 135, 84, 0.2);
+}
+
+.sidebar a { 
+    padding: 12px 20px; 
+    color: rgba(255, 255, 255, 0.75); 
+    text-decoration: none; 
+    display: block; 
+    font-weight: 500;
+    transition: 0.2s; 
+}
+
+.sidebar a:hover { 
+    color: white; 
+    background: rgba(255, 255, 255, 0.1); 
+}
+
+.sidebar a.active {
+    color: white;
+    background: #146c43;
+    border-left: 4px solid #20c997;
+}
+
+/* Komponen Konten Utama */
+.main-content { 
+    margin-left: 260px; 
+    padding: 40px; 
+}
+
+/* Komponen Kartu (Card Layout) */
+.card { 
+    border-radius: 16px; 
+    border: none; 
+    margin-bottom: 25px; 
+    box-shadow: 0 10px 30px rgba(25, 135, 84, 0.03); 
+}
+
+.stat-card { 
+    border-left: 6px solid; 
+}
+
+/* Komponen Tabel */
+.table { 
+    vertical-align: middle; 
+}

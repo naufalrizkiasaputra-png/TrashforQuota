@@ -1,270 +1,128 @@
 <!DOCTYPE html>
 <html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Sampah | TrashForQuota</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        body{
-            font-family: 'Inter', sans-serif;
-            background: #f4f9f6;
-        }
-
-        /* SIDEBAR */
-        .sidebar{
-            height: 100vh;
-            width: 260px;
-            position: fixed;
-            background: linear-gradient(180deg,#198754,#157347);
-            padding-top: 20px;
-            z-index: 100;
-        }
-
-        .sidebar .brand-area{
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: white;
-            padding: 10px 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .sidebar a{
-            padding: 13px 20px;
-            color: rgba(255,255,255,0.75);
-            text-decoration: none;
-            display: block;
-            font-weight: 500;
-            transition: .2s;
-        }
-
-        .sidebar a:hover{
-            background: rgba(255,255,255,0.08);
-            color: white;
-        }
-
-        .sidebar a.active{
-            background: #146c43;
-            color: white;
-            border-left: 4px solid #20c997;
-        }
-
-        /* MAIN */
-        .main-content{
-            margin-left: 260px;
-            padding: 35px;
-        }
-
-        .page-title{
-            font-weight: 700;
-            color: #198754;
-        }
-
-        .card{
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(25,135,84,0.05);
-        }
-
-        .form-control{
-            border-radius: 14px;
-            padding: 12px;
-        }
-
-        .btn-success{
-            border-radius: 14px;
-            padding: 12px 18px;
-            font-weight: 600;
-        }
-
-        .table thead{
-            background: #eefaf3;
-        }
-    </style>
-
+    <link rel="stylesheet" th:href="@{/css/style-admin.css}">
 </head>
-
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar shadow">
-
-    <div class="brand-area d-flex align-items-center">
-        <i class="bi bi-recycle me-2 text-warning"></i>
-        TrashForQuota
-    </div>
-
-    <div class="mt-3">
-
-        <a href="/admin/home">
-            <i class="bi bi-speedometer2 me-2"></i>
-            Dashboard
-        </a>
-
-        <a href="/admin/reward">
-            <i class="bi bi-gift me-2"></i>
-            Kelola Reward
-        </a>
-
-        <a href="/admin/smart-bins">
-            <i class="bi bi-trash me-2"></i>
-            Monitoring Bin
-        </a>
-
-        <a href="/admin/sampah" class="active">
-            <i class="bi bi-upc-scan me-2"></i>
-            Kelola Sampah
-        </a>
-
-        <a href="/admin/config">
-            <i class="bi bi-gear me-2"></i>
-            Konfigurasi
-        </a>
-
-        <hr class="mx-3 text-white-50">
-
-        <a href="/dashboard" class="text-warning fw-semibold">
-            <i class="bi bi-house-door me-2"></i>
-            Lihat User
-        </a>
-
-        <form th:action="@{/logout}" method="post" class="px-3 mt-4">
-            <input type="hidden"
-                   th:name="${_csrf.parameterName}"
-                   th:value="${_csrf.token}">
-            <button class="btn btn-outline-light w-100 rounded-pill">
-                <i class="bi bi-box-arrow-left me-2"></i>
-                Logout
-            </button>
-        </form>
-
-    </div>
-
-</div>
-
-<!-- MAIN CONTENT -->
-<div class="main-content">
-
-    <!-- HEADER -->
-    <div class="mb-4">
-        <h2 class="page-title">♻️ Kelola Kategori Sampah</h2>
-        <p class="text-muted">
-            Atur jenis sampah dan nilai konversi poin per gram.
-        </p>
-    </div>
-
-    <div class="row g-4">
-
-        <!-- FORM -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body p-4">
-
-                    <h5 class="fw-bold mb-3">Tambah / Edit Kategori</h5>
-
-                    <form th:action="@{/admin/sampah/simpan}"
-                          th:object="${itemBaru}"
-                          method="post">
-
-                        <input type="hidden" th:field="*{id}"/>
-
-                        <div class="mb-3">
-                            <label class="fw-semibold mb-2">Nama Kategori</label>
-                            <input type="text"
-                                   th:field="*{nama}"
-                                   class="form-control"
-                                   placeholder="Contoh: Plastik"
-                                   required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="fw-semibold mb-2">Nilai Poin (XP / gram)</label>
-                            <input type="number"
-                                   min="1"
-                                   th:field="*{poin}"
-                                   class="form-control"
-                                   placeholder="Contoh: 5"
-                                   required>
-                        </div>
-
-                        <button class="btn btn-success w-100">
-                            <i class="bi bi-save me-2"></i>
-                            Simpan Kategori
-                        </button>
-
-                    </form>
-
-                </div>
+    <div class="sidebar shadow">
+        <div class="brand-area d-flex align-items-center">
+            <i class="bi bi-recycle me-2 text-warning"></i> TrashForQuota
+        </div>
+        <div class="mt-3">
+            <a th:href="@{/admin/home}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a>
+            
+            <div th:if="${#authorization.expression('hasRole(''SUPER_ADMIN'')')}">
+                <a th:href="@{/admin/daftar-admin}">
+                    <i class="bi bi-people-fill me-2"></i> Kelola Daftar Admin
+                </a>
             </div>
+            
+            <a th:href="@{/admin/reward}"><i class="bi bi-credit-card me-2"></i> Manajemen Reward</a>
+            <a th:href="@{/admin/smart-bin}"><i class="bi bi-trash me-2"></i> Monitoring Bin</a>
+            
+            <a th:href="@{/admin/sampah}" class="active"><i class="bi bi-gear me-2"></i> Kategori - Sampah</a>
+            
+            <hr class="mx-3 text-white-50">
+            <a th:href="@{/user/home}" class="text-warning fw-semibold"><i class="bi bi-house-door me-2"></i> Lihat Beranda User</a>
+            <a th:href="@{/login}" class="text-white-50 mt-4 small"><i class="bi bi-box-arrow-left me-2"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+
+        <div class="mb-4">
+            <h2 class="page-title">♻️ Kelola Kategori Sampah</h2>
+            <p class="text-muted">Atur jenis sampah dan nilai konversi poin per gram.</p>
         </div>
 
-        <!-- TABLE -->
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body p-4">
+        <div class="row g-4">
 
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <h5 class="fw-bold mb-0">Data Kategori Sampah</h5>
-                            <small class="text-muted">
-                                Total:
-                                <span th:text="${#lists.size(listSampah)}"></span> kategori
-                            </small>
-                        </div>
+            <div class="col-md-4">
+                <div class="card bg-white shadow-sm">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3 text-dark">Tambah / Edit Kategori</h5>
+
+                        <form th:action="@{/admin/sampah/simpan}" th:object="${itemBaru}" method="post">
+                            <input type="hidden" th:field="*{id}"/>
+
+                            <div class="mb-3">
+                                <label class="fw-semibold mb-2 small text-muted">Nama Kategori</label>
+                                <input type="text" th:field="*{nama}" class="form-control" placeholder="Contoh: Plastik" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="fw-semibold mb-2 small text-muted">Nilai Poin (XP / gram)</label>
+                                <input type="number" min="1" th:field="*{poin}" class="form-control" placeholder="Contoh: 5" required>
+                            </div>
+
+                            <button class="btn btn-success w-100 fw-bold py-2 shadow-sm" style="border-radius: 12px;">
+                                <i class="bi bi-save me-2"></i> Simpan Kategori
+                            </button>
+                        </form>
                     </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nama</th>
-                                    <th>Poin</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                <tr th:each="s : ${listSampah}">
-                                    <td th:text="${s.id}"></td>
-                                    <td class="fw-semibold" th:text="${s.nama}"></td>
-                                    <td th:text="${s.poin} + ' XP / gram'"></td>
-                                    <td class="text-center">
-                                        <a th:href="@{/admin/sampah/hapus/{id}(id=${s.id})}"
-                                           onclick="return confirm('Hapus kategori ini?')"
-                                           class="btn btn-danger btn-sm rounded-pill px-3">
-                                            <i class="bi bi-trash"></i>
-                                            Hapus
-                                        </a>
-                                    </td>
-                                </tr>
-
-                                <tr th:if="${#lists.isEmpty(listSampah)}">
-                                    <td colspan="4" class="text-center text-muted py-4">
-                                        Belum ada kategori sampah.
-                                    </td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-
                 </div>
             </div>
-        </div>
 
+            <div class="col-md-8">
+                <div class="card bg-white shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="fw-bold mb-0 text-success">Data Kategori Sampah</h5>
+                                <small class="text-muted">
+                                    Total: <span th:text="${#lists.size(listSampah)}"></span> kategori
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle border-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="p-3 border-0">ID</th>
+                                        <th class="p-3 border-0">Nama</th>
+                                        <th class="p-3 border-0">Poin</th>
+                                        <th class="p-3 border-0 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="s : ${listSampah}">
+                                        <td class="p-3 text-muted small" th:text="${s.id}"></td>
+                                        <td class="p-3 fw-semibold text-dark" th:text="${s.nama}"></td>
+                                        <td class="p-3 text-success fw-medium" th:text="${s.poin} + ' XP / gram'"></td>
+                                        <td class="p-3 text-center">
+                                            <a th:href="@{/admin/sampah/hapus/{id}(id=${s.id})}"
+                                               onclick="return confirm('Hapus kategori ini?')"
+                                               class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm fw-semibold">
+                                                <i class="bi bi-trash me-1"></i> Hapus
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(listSampah)}">
+                                        <td colspan="4" class="text-center text-muted py-4 border-0">
+                                            <i class="bi bi-inbox fs-3 d-block mb-2 text-secondary"></i>
+                                            Belum ada data master kategori sampah yang terdaftar.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
